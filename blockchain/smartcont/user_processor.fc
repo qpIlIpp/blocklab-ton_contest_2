@@ -1,0 +1,161 @@
+;; 2019 Blocklab
+;;
+;; License: MPL-2.0
+
+;; processing users, calc ranks, indexes. Seriallize+deser
+
+;; dict<id, <TPi prev, [day0<Ri0, Ri0_count>, .. , dayX<Rix, Rix_count>], bans_count, user_balance, user_adr_wc, usr_adr_addr> >
+;; deserialize user information
+(int, cell, int, int) load_user(slice s) impure {
+    return (
+    s~load_uint(32), ;; prev_TPi
+    s~load_ref(), ;; days
+    s~load_uint(16), ;; bans_count
+    s~load_uint(64) ;; balance
+  );
+}
+
+;; serialize user information
+builder save_user(int prev_TPi, cell days, int bans_count, int balance) impure {
+    return begin_cell()
+    .store_uint(prev_TPi, 32)
+    .store_ref(days)
+    .store_uint(bans_count, 16)
+    .store_uint(balance, 64);
+}
+
+;; get user slice from dictionary with existance check
+slice get_user(cell users_dict, int id, int err_code) impure {
+    var (val, f) = users_dict.udict_get?(64, id);
+    _throw_unless(err_code, f);
+    return val;
+}
+
+;; check that user  is not in the dictinary
+(int) check_no_user(cell users_dict, int id, int err_code) impure {
+    var (val, f) = users_dict.udict_get?(64, id);
+    if (err_code != 0) {
+        _throw_if(err_code, f);
+    }
+    return f;
+}
+
+;; update or create user in users dictionary
+cell set_user(cell users_dict, int id, builder u) impure {
+    users_dict~udict_set_builder(64, id, u);
+    return users_dict;
+}
+
+;; create empty user
+builder create_user() impure {
+    return save_user(1, generate_days(), 0, 0);
+}
+
+;; add user to bans dictionary
+cell ban_user(cell dict, int id, int days_count) impure {
+    dict~udict_set_builder(64, id, begin_cell().store_int(days_count, 32));
+    return dict;
+}
+
+;; decrease user's bans day count, if he has it, otherwise do nothing
+cell decrease_user_ban(cell dict, int id) impure {
+    var (stream, exists) = dict~udict_delete_get?(64, id);
+    if (exists) {
+      ;; fs - slice
+      int pnd_count = stream~load_uint(32) - 1;
+      if (pnd_count > 0) {
+          dict = ban_user(dict, id, pnd_count);
+      }
+    }
+    return dict;
+}
+
+;; add new user to users dictionary
+(cell, cell, cell) add_user(cell users_top, cell current_users, cell banned_users, int id) impure {
+    check_no_user(current_users, id, err_user_exists());
+    current_users = set_user(current_users, id, create_user());
+    return (users_top, current_users, banned_users);
+}
+
+;; change users' rating (changing first element in days(periods) list)
+(int, cell) proceed_user_rating(cell days, int TPi_was, int increase) impure {
+    (int rdi, int cnt) = unparse_day(days.begin_parse());
+    if (increase) {
+        rdi = rdi + TPi_was;
+    } else {
+        rdi = rdi - TPi_was;
+    }
+    cnt = cnt + 1;
+    ;; change days-ratings list
+    days = change_first_day(days, rdi, cnt);
+    return (rdi, days);
+}
+
+;; change user rating after like \ dislike
+(cell, cell, cell) rate_func(cell users_top, cell current_users, cell banned_users, int id_from, int id_to, int increase) impure {
+    var usr_from = get_user(current_users, id_from, err_user_was_not_found());
+    var usr_to = get_user(current_users, id_to, err_user_was_not_found());
+
+    (int from_prev_TPi, _, _, _) = load_user(usr_from);
+    (int prev_TPi, cell to_days, int to_bans_count, int balance) = load_user(usr_to);
+    ;; in the current version, we don't store every single message user relations (at least in memory consumption reason)
+    ;; it means that users can like another user message multiple times. Backend should prevent it
+
+    (int res_Ri, to_days) = proceed_user_rating(to_days, from_prev_TPi, increase);
+
+    if (res_Ri < 0) {
+        to_bans_count = to_bans_count + 1;
+        banned_users = ban_user(banned_users, id_to, to_bans_count);
+    }
+
+    current_users = set_user(current_users, id_to, save_user(prev_TPi, to_days, to_bans_count, balance));
+    return (users_top, current_users, banned_users);
+
+}
+
+;; start like process
+(cell, cell, cell) like(cell users_top, cell current_users, cell banned_users, int id_from, int id_to) impure {
+    _throw_if(err_cannot_like_yourself(), id_from == id_to );
+
+    check_no_user(banned_users, id_from, err_user_banned());
+    check_no_user(banned_users, id_to, err_user_banned());
+
+    (users_top, current_users, banned_users) = rate_func(users_top, current_users, banned_users, id_from, id_to, true);
+
+    return (users_top, current_users, banned_users);
+}
+
+;; start dislike process
+(cell, cell, cell) dislike(cell users_top, cell current_users, cell banned_users, int id_from, int id_to) impure {
+    _throw_if(err_cannot_like_yourself(), id_from == id_to );
+ 
+    check_no_user(banned_users, id_from, err_user_banned());
+    check_no_user(banned_users, id_to, err_user_banned());
+
+    (users_top, current_users, banned_users) = rate_func(users_top, current_users, banned_users, id_from, id_to, false);
+    return (users_top, current_users, banned_users);
+}
+
+;; user want to transfer out, he choose claim amount and trandfering address
+(cell, cell, cell) claim(cell users_top, cell current_users, cell banned_users, int id_who, int amount, int wc, int addr) impure {
+    _throw_unless(err_bad_amount(), amount > 0);
+    var usr_to = get_user(current_users, id_who, err_user_was_not_found());
+    (int to_prev_TPi, cell to_days, int to_bans_count, int to_balance) = load_user(usr_to);
+    _throw_if(err_overdrawn_balance(), to_balance < amount);
+    to_balance = to_balance - amount;
+    current_users = set_user(current_users, id_who, save_user(to_prev_TPi, to_days, to_bans_count, to_balance));
+    
+    send_grams(wc, addr, amount);
+
+    return (users_top, current_users, banned_users);
+}
+
+;; adding balance to user
+(cell, cell, cell) add_balance(cell users_top, cell current_users, cell banned_users, int id_who, int amount) impure {
+    var usr_to = get_user(current_users, id_who, err_user_was_not_found());
+    (int to_prev_TPi, cell to_days, int to_bans_count, int to_balance) = load_user(usr_to);
+    to_balance = to_balance + amount;
+    current_users = set_user(current_users, id_who, save_user(to_prev_TPi, to_days, to_bans_count, to_balance));
+    return (users_top, current_users, banned_users);
+}
+

@@ -1,0 +1,63 @@
+;; 2019 Blocklab
+;;
+;; License: MPL-2.0
+
+;; constants, errors codes and errors wrapper
+
+int days_count() {
+    ;; in case of day count change (update contract) with filled
+    ;; `users_top` or `current_users`, contract will broke
+
+    ;; we should concern that "days" can be not only days, but it's also an any period between reevaluating ticks
+    return 10;
+}
+
+int system_donate_comission() {
+    ;; now it's 10%, can be [0..100]
+    return 10;
+}
+
+int distribution_percent() {
+    ;; now it's 20%, can be [0..100]
+    ;; distribution_percent + system_donate_comission should be less than 100%
+    return 20;
+}
+
+int distribution_recievers_count() {
+    ;; amount of people from users_top, which will get rewards
+    return 15; ;; 2^4 - 1
+}
+
+;; errors list
+int err_empty_ext_mes() { return 20; }
+int err_sign_mismatch() { return 21; }
+int err_seqno_mismatch() { return 22; }
+int err_unknow_action() { return 23; }
+int err_new_empty_code() { return 24; }
+int err_bad_index_users_top() { return 25; }
+int err_user_was_not_found() { return 26; }
+int err_user_exists() { return 27; }
+int err_user_banned() { return 28; }
+int err_bad_amount() { return 29; }
+int err_overdrawn_balance() { return 30; }
+int err_cannot_like_yourself() { return 31; }
+int err_no_users() { return 32; }
+
+
+() _throw_if(err_code, cond) impure {
+    if (cond) {
+        throw(err_code);
+    }
+    ;; int err_empty_ext_mes() { return 20; }
+    ;; ...
+    ;; throw_if(err_empty_ext_mes(), in_msg.slice_empty?());
+    ;; it compiles, but on import in fif code throws
+    ;; include: error interpreting included file `self_regul_community.fif` : self_regul_community.fif:96: THROWANYIFNOT: not a cell builder
+    ;; because `20 PUSHINT ... 2 THROWANYIFNOT` was generated instead of `21 THROWANYIFNOT`
+    ;; so we made wrapper for beauty error handling  
+}
+
+() _throw_unless(err_code, cond) impure {
+    _throw_if(err_code, ~ cond);
+}
+

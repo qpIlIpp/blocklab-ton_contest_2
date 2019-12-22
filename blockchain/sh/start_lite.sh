@@ -1,0 +1,1 @@
+../ton/build/lite-client/lite-client -C ../ton/build/ton-lite-client-test1.config.json

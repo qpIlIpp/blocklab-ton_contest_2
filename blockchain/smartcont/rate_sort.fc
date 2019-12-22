@@ -1,0 +1,204 @@
+;; 2019 Blocklab
+;;
+;; License: MPL-2.0
+
+;; main logic about sorting users, proceeding distribution between active users
+
+;; serialize rating information
+(slice, int, int) parse_user_top(slice stream) impure {
+    return (stream, stream~load_uint(64), stream~load_int(32));
+}
+
+;; deserialize rating information
+builder build_user_top(int id, int ri) impure {
+    return begin_cell().store_uint(id, 64).store_int(ri, 32);
+}
+
+;; dict, id, Ri, is_found?
+;; function helper, search for user with minimal rating in dictionary and remove it
+(cell, int, int, int) delete_get_min_value_rate(cell users) impure {
+    var id = -1;
+    int INT_MAX = 2147483647;
+    int min_Ri = INT_MAX;
+    int min_id = -1;
+    do {
+        (id, var stream, var f) = users.udict_get_next?(64, id);
+        if (f) {
+            (int prev_TPi, cell days, int bans_count, int balance) = load_user(stream);
+            ;; calculate rating according to all (days_count) periods stored in user's info
+            int measure = measure_days(days);
+            if (measure < min_Ri) {
+                min_Ri = measure;
+                min_id = id;
+            }
+        }
+    } until (~ f);
+
+    if (min_id != -1) {
+        int searchres = users~udict_delete?(64, min_id);
+        return (users, min_id, min_Ri, true);
+    }
+    return (users, 0, 0, false);
+}
+
+;; build sorted list according to users information
+;;
+;; it's the most complex place of rating algorithm
+;; we search minimum element iterrating dictionary - O(n) and do it in the loop - O(n)
+;; total complexity is O(n^2)
+;; In contest version we focused on algorithm reading simplicity
+;; But in production it's greate place to implement some O(n * log n) sorting
+(cell, int) rebuild_top(cell users) impure {
+    int count = 0;
+    ;; we store empty cell in the end, we will not proceed it later
+    var tail_cell = begin_cell().end_cell();
+    int found = true;
+    do {
+        ;; getting user with minimal rating from mutable dictionary
+        (users, int min_id, int min_Ri, found) = delete_get_min_value_rate(users);
+        if (found) {
+            ;; proceeded users count
+            count = count + 1;
+            builder prev_elem = build_user_top(min_id, min_Ri).store_ref(tail_cell);
+            ;; building result list from the tail
+            tail_cell = prev_elem.end_cell();
+        }
+    } until (~ found);
+    return (tail_cell, count);
+}
+
+;; almos ln, 1 -> 0, 2 -> 1, 3 -> 1, 4 -> 2, 5 -> 2 etc..
+int almost_ln(int value) {
+    if (value == 0) {
+        return -1;
+    }
+    return 1 + almost_ln(value / 2);
+}
+
+;; return user's weight in community according to his rating (sorted list via ratings) and total users count
+int meausure_TPi(index, int users_count) impure {
+    int log = almost_ln( ( users_count ) / (index + 1) );
+    return log + 1;
+}
+
+;; update user info after rebuilding sorted list
+(cell, cell) proceed_user(int index, int id, cell current_users, cell banned_users, int users_count) {
+    var user_slice = get_user(current_users, id, err_user_was_not_found());
+    (int prev_TPi, cell days, int bans_count, int balance) = load_user(user_slice);
+    prev_TPi = meausure_TPi(index, users_count);
+    ;; remove user's information about last day, add empty information at first day place
+    (days, int rem_Ri, int rem_Ri_count) = rebuild_days(days);
+    current_users = set_user(current_users, id, save_user(prev_TPi, days, bans_count, balance));
+
+    ;; remove 1 period for user's ban
+    banned_users = decrease_user_ban(banned_users, id);
+
+    return (current_users, banned_users);
+}
+
+;; update users' and bans information according to already builded ranting sorted list
+(cell, cell, cell) update_users_and_bans(cell users_top, cell current_users, cell banned_users, int users_count) impure {
+    slice stream = users_top.begin_parse();
+    int index = 0;
+
+    ;; iterrate all the users    
+    while (stream.slice_refs()) {
+        (stream, int id, _) = parse_user_top(stream);
+        ;; change found user
+        (current_users, banned_users) = proceed_user(index, id, current_users, banned_users, users_count);
+        stream = stream~load_ref().begin_parse();
+        index = index + 1;
+    }
+    return (users_top, current_users, banned_users);
+}
+
+;; distribute some amount of money between first min(users_count, max_count) users
+;; user will get more reward in case of bigger TPi
+cell pay_to_users(cell users_top, cell current_users, int amount) impure {
+    slice stream = users_top.begin_parse();
+    int curr_count = 0;
+    int max_count = distribution_recievers_count();
+    int TPi_Sum = 0;
+    
+    ;; calculating TPi sum of first min(users_count, max_count) users
+    while (stream.slice_refs() & (curr_count < max_count)) {
+        (stream, int id, _) = parse_user_top(stream);
+        var user_slice = get_user(current_users, id, err_user_was_not_found());
+        (int user_TPi, _, _, _) = load_user(user_slice);
+        TPi_Sum = TPi_Sum + user_TPi;
+        curr_count = curr_count + 1;
+        stream = stream~load_ref().begin_parse();
+    }
+
+    if (curr_count == 0) {
+        ;; there was no users_top calcutaion processes
+        ;; we cannot distribute
+        ;; just return
+        return current_users;
+    }
+
+
+    stream = users_top.begin_parse();
+    curr_count = 0;
+    ;; distibute reward between users
+    while (stream.slice_refs() & (curr_count < max_count)) {
+        (stream, int id, _) = parse_user_top(stream);
+        var user_slice = get_user(current_users, id, err_user_was_not_found());
+        (int prev_TPi, cell days, int bans_count, int balance) = load_user(user_slice);
+        ;; user gets amount * his_TPi / sum_TPi
+        balance = balance + (amount * prev_TPi / TPi_Sum);
+        current_users = set_user(current_users, id, save_user(prev_TPi, days, bans_count, balance));
+        curr_count = curr_count + 1;
+        stream = stream~load_ref().begin_parse();
+    }
+    return current_users;
+}
+
+;; start recalculate and distribute process
+(cell, cell, cell) distribute(cell users_top, cell current_users, cell banned_users, int amount) impure {
+    ;; build sorted rating list
+    (users_top, int users_count) = rebuild_top(current_users);
+    ;; update users' data
+    (users_top, current_users, banned_users) = update_users_and_bans(users_top, current_users, banned_users, users_count);
+    current_users = pay_to_users(users_top, current_users, amount);
+    return (users_top, current_users, banned_users);
+}
+
+;; donate from one user to another. System comission is system_donate_comission(), 
+;; distribution_percent() will be distributed between users wit top rates
+(cell, cell, cell) donate(cell users_top, cell current_users, cell banned_users, int id_from, int id_to, int amount) impure {
+    _throw_if(err_cannot_like_yourself(), id_from == id_to );
+
+    var usr_from = get_user(current_users, id_from, err_user_was_not_found());
+    var usr_to = get_user(current_users, id_to, err_user_was_not_found());
+
+    (int fr_prev_TPi, cell fr_days, int fr_bans_count, int fr_balance) = load_user(usr_from);
+    (int to_prev_TPi, cell to_days, int to_bans_count, int to_balance) = load_user(usr_to);
+
+    int not_banned_from = ~ check_no_user(banned_users, id_from, 0);
+    int not_banned_to = ~ check_no_user(banned_users, id_to, 0);
+
+    if (not_banned_from & not_banned_to) {
+        ;; in case of both users are not banned, donate is also like
+        (users_top, current_users, banned_users) = rate_func(users_top, current_users, banned_users, id_from, id_to, true);
+    }
+
+    _throw_unless(err_bad_amount(), amount > 0);
+    _throw_if(err_overdrawn_balance(), fr_balance < amount);
+
+    ;; decrease payer balance
+    fr_balance = fr_balance - amount;
+
+    int distrib_amount = amount * distribution_percent() / 100;
+    int system_comission = amount * system_donate_comission() / 100;
+
+    ;; increase getter balance
+    to_balance = to_balance + amount - distrib_amount - system_comission;
+
+    current_users = set_user(current_users, id_from, save_user(fr_prev_TPi, fr_days, fr_bans_count, fr_balance));
+    current_users = set_user(current_users, id_to, save_user(to_prev_TPi, to_days, to_bans_count, to_balance));
+
+    ;; distibute distrib_amount between users
+    current_users = pay_to_users(users_top, current_users, distrib_amount);
+    return (users_top, current_users, banned_users);
+}

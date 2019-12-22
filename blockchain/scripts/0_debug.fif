@@ -1,0 +1,218 @@
+#!/usr/bin/fift -s
+
+// <b "Self regular community payout" $, .s b> drop
+// <b x{53656c6620726567756c617220636f6d6d756e697479207061796f7574} s, .s b> drop
+// <b 2248356707566427805779502752936870625285869473747858350333544190932340 232 u, .s b> drop
+
+// tst
+{
+2dup
+."____________________________" cr
+."Updated storage: " cr <s csr.
+dup
+0= { ."normal termination: " } { halt } cond
+."exit code " . cr
+."____________________________" cr
+} : res
+
+"Asm.fif" include
+"../smartcont/self_regul_community.fif" include =: code_cell code_cell <s =: code
+"TonUtil.fif" include
+
+"key.pk" load-generate-keypair =: wallet_pk =: wallet_pb
+"EQAeV1QUqaI8rnSobgv3gQIP1udJ-YcqYfus5qeC0YhmhDwJ" 1 parse-load-address =: bounce 2=: x_addr
+
+1576741466 =: cur_time
+
+1 =: ii
+<b 0 32 u, wallet_pb B, <b b> ref, null dict, null dict, ii 32 u, b> =: storage
+
+// https://t.me/ton_research/5316 :
+
+0 tuple 0x076ef1ea , // magic
+0 , 0 , // actions msg_sents
+cur_time , // unix_time
+1 , 1 , 0 , // block_lt, trans_lt, rand_seed
+0 tuple 9223372036854775807 , dictnew , , // remaining balance
+0 , dictnew , // contract_address, global_config
+1 tuple // wrap to another tuple
+=: c7
+
+"0.5" $>GR =: amount
+
+cr ."create acc 0" cr
+<b 0 32 u, 0 32 u, b> =: msg
+msg hashu wallet_pk ed25519_sign_uint =: sign
+<b msg ref, sign B, b> <s -1 code storage c7 runvmctx res constant storage constant exit_code
+
+cr ."try change code 1" cr
+<b 1 32 u, 1 32 u, <{ ACCEPT }>c ref, b> =: msg
+msg hashu wallet_pk ed25519_sign_uint =: sign
+<b msg ref, sign B, b> <s -1 code storage c7 runvmctx res constant storage constant exit_code
+
+cr ."raw message 2" cr
+<b 0 32 u, "Test transfer" $, b> =: body-cell
+<b b{01} s, bounce 1 i, b{000100} s, x_addr addr, amount Gram, 0 9 64 32 + + 1+ u, 
+  body-cell <s 2dup s-fits? not rot over 1 i, -rot { drop body-cell ref, } { s, } cond
+b>
+<b 2 32 u, 2 32 u, 2 8 u, swap ref, b> =: msg
+msg hashu wallet_pk ed25519_sign_uint =: sign
+<b msg ref, sign B, b> <s -1 code storage c7 runvmctx res constant storage constant exit_code
+
+cr ."reset state 3" cr
+<b 3 32 u, 3 32 u, b> =: msg
+msg hashu wallet_pk ed25519_sign_uint =: sign
+<b msg ref, sign B, b> <s -1 code storage c7 runvmctx res constant storage constant exit_code
+
+cr ."add user 4 (1)" cr
+1 =: id
+<b 40 32 u, 4 32 u, id 64 u, b> =: msg
+msg hashu wallet_pk ed25519_sign_uint =: sign
+<b msg ref, sign B, b> <s -1 code storage c7 runvmctx res constant storage constant exit_code
+
+cr ."add balance 10 (1)" cr
+1 =: id
+100 =: amount
+<b 41 32 u, 10 32 u, id 64 u, amount 64 u, b> =: msg
+msg hashu wallet_pk ed25519_sign_uint =: sign
+<b msg ref, sign B, b> <s -1 code storage c7 runvmctx res constant storage constant exit_code
+
+cr ."add user 4 (2)" cr
+2 =: id
+<b 42 32 u, 4 32 u, id 64 u, b> =: msg
+msg hashu wallet_pk ed25519_sign_uint =: sign
+<b msg ref, sign B, b> <s -1 code storage c7 runvmctx res constant storage constant exit_code
+
+cr ."add balance 10 (1)" cr
+2 =: id
+100 =: amount
+<b 43 32 u, 10 32 u, id 64 u, amount 64 u, b> =: msg
+msg hashu wallet_pk ed25519_sign_uint =: sign
+<b msg ref, sign B, b> <s -1 code storage c7 runvmctx res constant storage constant exit_code
+
+cr ."like 5" cr
+1 =: id_from
+2 =: id_to
+<b 50 32 u, 5 32 u, id_from 64 u, id_to 64 u, b> =: msg
+msg hashu wallet_pk ed25519_sign_uint =: sign
+<b msg ref, sign B, b> <s -1 code storage c7 runvmctx res constant storage constant exit_code
+
+
+cr ."dislike 6" cr
+2 =: id_from
+1 =: id_to
+<b 60 32 u, 6 32 u, id_from 64 u, id_to 64 u, b> =: msg
+msg hashu wallet_pk ed25519_sign_uint =: sign
+<b msg ref, sign B, b> <s -1 code storage c7 runvmctx res constant storage constant exit_code
+
+1 100500 116430 code storage c7 runvmctx res constant storage constant exit_code .s drop drop drop drop drop drop drop drop drop
+1 100500 110623 code storage c7 runvmctx res constant storage constant exit_code .s drop drop drop drop
+
+cr ."distribute 8" cr
+1000 =: amount
+<b 80 32 u, 8 32 u, amount 64 u, b> =: msg
+msg hashu wallet_pk ed25519_sign_uint =: sign
+<b msg ref, sign B, b> <s -1 code storage c7 runvmctx res constant storage constant exit_code
+
+1 100500 116430 code storage c7 runvmctx res constant storage constant exit_code .s drop drop drop drop drop drop drop drop drop
+1 100500 110623 code storage c7 runvmctx res constant storage constant exit_code .s drop drop drop drop
+
+cr ."add user 4 (3)" cr
+3 =: id
+<b 81 32 u, 4 32 u, id 64 u, b> =: msg
+msg hashu wallet_pk ed25519_sign_uint =: sign
+<b msg ref, sign B, b> <s -1 code storage c7 runvmctx res constant storage constant exit_code
+
+3 100500 116430 code storage c7 runvmctx res constant storage constant exit_code .s drop drop drop drop drop drop drop drop drop
+
+cr ."distribute 8" cr
+0 =: amount
+<b 82 32 u, 8 32 u, amount 64 u, b> =: msg
+msg hashu wallet_pk ed25519_sign_uint =: sign
+<b msg ref, sign B, b> <s -1 code storage c7 runvmctx res constant storage constant exit_code
+
+1 100500 116430 code storage c7 runvmctx res constant storage constant exit_code .s drop drop drop drop drop drop drop drop drop
+0 100500 74195 code storage c7 runvmctx res constant storage constant exit_code .s drop drop drop drop
+
+
+cr ."like 2 -> 1" cr
+2 =: id_from
+1 =: id_to
+<b 83 32 u, 5 32 u, id_from 64 u, id_to 64 u, b> =: msg
+msg hashu wallet_pk ed25519_sign_uint =: sign
+<b msg ref, sign B, b> <s -1 code storage c7 runvmctx res constant storage constant exit_code
+1 100500 116430 code storage c7 runvmctx res constant storage constant exit_code .s drop drop drop drop drop drop drop drop drop
+
+cr ."like 3 -> 1" cr
+3 =: id_from
+1 =: id_to
+<b 84 32 u, 5 32 u, id_from 64 u, id_to 64 u, b> =: msg
+msg hashu wallet_pk ed25519_sign_uint =: sign
+<b msg ref, sign B, b> <s -1 code storage c7 runvmctx res constant storage constant exit_code
+1 100500 116430 code storage c7 runvmctx res constant storage constant exit_code .s drop drop drop drop drop drop drop drop drop
+
+cr ."distribute 8" cr
+0 =: amount
+<b 85 32 u, 8 32 u, amount 64 u, b> =: msg
+msg hashu wallet_pk ed25519_sign_uint =: sign
+<b msg ref, sign B, b> <s -1 code storage c7 runvmctx res constant storage constant exit_code
+
+0 100500 74195 code storage c7 runvmctx res constant storage constant exit_code .s drop drop drop drop
+
+cr ."add user 4 (3)" cr
+4 =: id
+<b 86 32 u, 4 32 u, id 64 u, b> =: msg
+msg hashu wallet_pk ed25519_sign_uint =: sign
+<b msg ref, sign B, b> <s -1 code storage c7 runvmctx res constant storage constant exit_code
+
+4 100500 116430 code storage c7 runvmctx res constant storage constant exit_code .s drop drop drop drop drop drop drop drop drop
+
+cr ."distribute 8" cr
+0 =: amount
+<b 87 32 u, 8 32 u, amount 64 u, b> =: msg
+msg hashu wallet_pk ed25519_sign_uint =: sign
+<b msg ref, sign B, b> <s -1 code storage c7 runvmctx res constant storage constant exit_code
+
+0 100500 74195 code storage c7 runvmctx res constant storage constant exit_code .s drop drop drop drop
+2 100500 116430 code storage c7 runvmctx res constant storage constant exit_code .s drop drop drop drop drop drop drop drop drop
+
+cr ."claim 9" cr
+2 =: id_to
+766 =: amount
+<b 90 32 u, 9 32 u, id_to 64 u, amount 64 u, x_addr addr, b> =: msg
+msg hashu wallet_pk ed25519_sign_uint =: sign
+<b msg ref, sign B, b> <s -1 code storage c7 runvmctx res constant storage constant exit_code
+
+cr ."claim 9" cr
+1 =: id_to
+433 =: amount
+<b 91 32 u, 9 32 u, id_to 64 u, amount 64 u, x_addr addr, b> =: msg
+msg hashu wallet_pk ed25519_sign_uint =: sign
+<b msg ref, sign B, b> <s -1 code storage c7 runvmctx res constant storage constant exit_code
+
+2 100500 116430 code storage c7 runvmctx res constant storage constant exit_code .s drop drop drop drop drop drop drop drop drop
+
+cr ."distribute 8" cr
+1000 =: amount
+<b 92 32 u, 8 32 u, amount 64 u, b> =: msg
+msg hashu wallet_pk ed25519_sign_uint =: sign
+<b msg ref, sign B, b> <s -1 code storage c7 runvmctx res constant storage constant exit_code
+0 100500 74195 code storage c7 runvmctx res constant storage constant exit_code .s drop drop drop drop
+4 100500 116430 code storage c7 runvmctx res constant storage constant exit_code .s drop drop drop drop drop drop drop drop drop
+
+cr ."add user 4 (3)" cr
+5 =: id
+<b 93 32 u, 4 32 u, id 64 u, b> =: msg
+msg hashu wallet_pk ed25519_sign_uint =: sign
+<b msg ref, sign B, b> <s -1 code storage c7 runvmctx res constant storage constant exit_code
+
+5 100500 116430 code storage c7 runvmctx res constant storage constant exit_code .s drop drop drop drop drop drop drop drop drop
+
+cr ."donate 1 -> 2" cr
+2 =: id_from
+5 =: id_to
+350 =: amount
+<b 94 32 u, 7 32 u, id_from 64 u, id_to 64 u, amount 64 u, b> =: msg
+msg hashu wallet_pk ed25519_sign_uint =: sign
+<b msg ref, sign B, b> <s -1 code storage c7 runvmctx res constant storage constant exit_code
+4 100500 116430 code storage c7 runvmctx res constant storage constant exit_code .s drop drop drop drop drop drop drop drop drop

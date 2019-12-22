@@ -1,0 +1,94 @@
+;; 2019 Blocklab
+;;
+;; License: MPL-2.0
+
+;; processing ratings during the day
+;; we called period "day" , but it can be any period - hour, week, etc
+
+;; create new empty list with days_count() elements
+cell generate_days() impure {
+    var res_cell = begin_cell()
+    .store_int(0, 32)
+    .store_uint(0, 5)
+    .end_cell();
+    int x = days_count();
+    while (x > 1) {
+        x = x - 1;
+        var cur_cell = begin_cell()
+        .store_int(0, 32)
+        .store_uint(0, 5)
+        .store_ref(res_cell)
+        .end_cell();
+        res_cell = cur_cell;
+    }
+    return res_cell;
+}
+
+;; deserialize day information
+(int, int) unparse_day(slice s) impure {
+    return (s~load_int(32), s~load_uint(5));
+}
+
+;; get day info from dictionary
+(int, int) help_day_getter(cell dict, int at) impure {
+    var (val, f) = dict.udict_get?(16, at);
+    return unparse_day(val);
+}
+
+;; throws last day information (tail of the list), add empty day information as the head
+(cell, int, int) rebuild_days(cell old_days) impure {
+    ;; converts list to dictionary, indexes is  [0..days_count]
+    var list_helper = new_dict();
+    int index = 1;
+    int end_index = days_count(); ;; throw the last day data away, [1,2,3..x] was [0,1,2,3..x-1] become
+    list_helper~udict_set_builder(16, 0, begin_cell().store_int(0, 32).store_uint(0, 5));
+    while (index <= end_index) {
+        slice stream = old_days.begin_parse();
+        var (rdi, cnt) = unparse_day(stream);
+        list_helper~udict_set_builder(16, index, begin_cell().store_int(rdi, 32).store_uint(cnt, 5));
+        if (stream.slice_refs() ) {
+            old_days = stream~load_ref();
+        }
+        index = index + 1;
+    }
+
+    index = end_index - 1;
+
+    ;; converts [0..days_count-1] to list and return dict[days_count]
+    var (rdi, cnt) = help_day_getter(list_helper, index);
+    var res_cell = begin_cell().store_int(rdi, 32).store_uint(cnt, 5).end_cell();
+    while (index > 0) {
+        index = index - 1;
+        var (rdi, cnt) = help_day_getter(list_helper, index);
+        res_cell = begin_cell().store_int(rdi, 32).store_uint(cnt, 5).store_ref(res_cell).end_cell();
+    }
+    var (rdi, cnt) = help_day_getter(list_helper, end_index);
+    return (res_cell, rdi, cnt);
+}
+
+;; change first day with exact values, serialize day information
+cell change_first_day(cell old_days, int rdi, int cnt) impure {
+    var stream = old_days.begin_parse();
+    var (_, _, next) = (stream~load_uint(32), stream~load_uint(5), stream~load_ref());
+    return begin_cell().store_int(rdi, 32).store_uint(cnt, 5).store_ref(next).end_cell();
+}
+
+;; calculate total rating according stored days information
+;; days_summ (RDi * 100 / Day_Likes_Count_i)
+int measure_days(cell days) impure {
+    int result = 0;
+    int index = 0;
+    int end_index = days_count(); ;; throw the last day data away, [1,2,3..x] was [0,1,2,3..x-1] become
+    while (index < end_index) {
+        slice stream = days.begin_parse();
+        var (RDi, Day_Likes_Count_i) = unparse_day(stream);
+        if (stream.slice_refs() ) {
+            days = stream~load_ref();
+        }
+        if (Day_Likes_Count_i != 0) {
+            result = result + ( (RDi * 100) / Day_Likes_Count_i );
+        }
+        index = index + 1;
+    }
+    return result;
+}

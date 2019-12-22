@@ -1,0 +1,28 @@
+#!/usr/bin/env fift -s
+"TonUtil.fif" include
+"Asm.fif" include
+
+"key" =: file-base
+
+$# 2 >  {  } { ."pass seqno id_who amount" 1 halt } cond
+$1 (number) drop =: seqno
+$2 (number) drop =: id_who
+$3 (number) drop =: amount
+
+"query" constant savefile
+
+file-base +".addr" load-address 2=: contract_addr
+
+contract_addr ."Source contract address = " 2dup .addr cr 6 .Addr cr
+file-base +".pk" load-keypair nip constant wallet_pk
+
+<b seqno 32 u, 10 32 u, id_who 64 u, amount 64 u, b> =: msg
+msg hashu wallet_pk ed25519_sign_uint  =: sign
+
+<b b{1000100} s, contract_addr addr, 0 Gram, b{00} s,
+   msg ref, sign B, b>
+
+dup ."resulting external message: " <s csr. cr
+2 boc+>B dup Bx. cr
+savefile +".boc" tuck B>file
+."(Saved to file " type .")" cr

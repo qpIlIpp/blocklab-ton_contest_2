@@ -1,0 +1,162 @@
+;; 2019 Blocklab
+;;
+;; License: MPL-2.0
+
+;; Self Regulated Community
+
+() dbgon() impure asm "DEBUGON";
+() stck() impure asm "DUMPSTK";
+
+;; deserialize contract information
+;; seqno, key, users_top, current_users, banned_users
+(int, int, cell, cell, cell) load () impure {
+  var ds = get_data().begin_parse();
+  return (
+    ds~load_uint(32), ;; seqno
+    ds~load_uint(256), ;; key
+    ds~load_ref(), ;; users_top
+    ds~load_dict(), ;; current_users
+    ds~load_dict() ;; banned_users
+  );
+}
+
+;; serialize contract information
+() save (seqno, key, users_top, current_users, banned_users) impure {
+  set_data(begin_cell()
+  .store_uint(seqno, 32)
+  .store_uint(key, 256)
+  .store_ref(users_top)
+  .store_dict(current_users)
+  .store_dict(banned_users)
+  .end_cell());
+}
+
+;; deserialize contract seqno and key (for update schema of stored data)
+;; seqno, key
+(int, int) load_short() impure {
+  var ds = get_data().begin_parse();
+  return (
+    ds~load_uint(32), ;; seqno
+    ds~load_uint(256) ;; key
+  );
+}
+
+() recv_internal(slice in_msg) impure {
+  ;; do nothing for internal messages
+}
+
+() recv_external(slice in_msg) impure {
+  dbgon();
+  
+  _throw_if(err_empty_ext_mes(), in_msg.slice_empty?());
+  
+  var msg_data = in_msg~load_ref().begin_parse();
+  var slice_to_sign = msg_data;
+  var signature = in_msg~load_bits(512);
+  
+  var (seqno, key) = load_short();
+  ;; check signature of recieved message
+  ;; only owner can send messages
+  _throw_unless(err_sign_mismatch(), check_signature(slice_hash(slice_to_sign), signature, key));
+  
+  ;; check seqno to prevent accepting old messages
+  var signed_seq = msg_data~load_uint(32);
+  var action = msg_data~load_uint(32);
+  ;; we can accept of seqnos not only equal, but bigger also
+  _throw_if(err_seqno_mismatch(), signed_seq < seqno);
+  
+  accept_message(); ;; TON probably has gas resrtiction. We should call accept_message ASAP
+
+  if (action == 3) {
+    ;; clear data
+    ;; debug function, should be removed in production
+    _throw_if(err_seqno_mismatch(), signed_seq != seqno);
+    cell empty =  begin_cell().end_cell();
+    save(signed_seq + 1, key, empty, new_dict(), new_dict());
+    return ();
+  }
+
+  var (seqno, key, users_top, current_users, banned_users) = load();
+  seqno = signed_seq;
+  _throw_if(err_unknow_action(), action > 10);
+  
+  if (action == 0) {
+    ;; just accept
+  }
+
+  if (action == 1) {
+    ;; set_code
+    ;; if we want unchangeable contract, we should remove code update
+    var code = msg_data~load_ref();
+
+    _throw_if(err_new_empty_code(), code.null?());
+    set_code(code);
+  }
+
+  if (action == 2) {
+    ;; send message from contract
+    var mode = msg_data~load_uint(8);
+    var msg = msg_data~load_ref();
+
+    send_raw_message(msg, mode);
+  }
+
+  if (action == 4) {
+    ;; add user
+    var id = msg_data~load_uint(64);
+
+    (users_top, current_users, banned_users) = add_user(users_top, current_users, banned_users, id);
+  }
+
+  if (action == 5) {
+    ;; like
+    var id_from = msg_data~load_uint(64);
+    var id_to = msg_data~load_uint(64);
+
+    (users_top, current_users, banned_users) = like(users_top, current_users, banned_users, id_from, id_to);
+  }
+
+  if (action == 6) {
+    ;; dislike
+    var id_from = msg_data~load_uint(64);
+    var id_to = msg_data~load_uint(64);
+
+    (users_top, current_users, banned_users) = dislike(users_top, current_users, banned_users, id_from, id_to);
+  }
+
+  if (action == 7) {
+    ;; donate
+    var id_from = msg_data~load_uint(64);
+    var id_to = msg_data~load_uint(64);
+    var amount = msg_data~load_uint(64);
+
+    (users_top, current_users, banned_users) = donate(users_top, current_users, banned_users, id_from, id_to, amount);
+  }
+
+  if (action == 8) {
+    ;; distribute
+    var amount = msg_data~load_uint(64);
+
+    (users_top, current_users, banned_users) = distribute(users_top, current_users, banned_users, amount);
+  }
+
+  if (action == 9) {
+    ;; claim
+    var id_who = msg_data~load_uint(64);
+    var amount = msg_data~load_uint(64);
+    var wc = msg_data~load_uint(8);
+    var addr = msg_data~load_uint(256);
+
+    (users_top, current_users, banned_users) = claim(users_top, current_users, banned_users, id_who, amount, wc, addr);
+  }
+
+  if (action == 10) {
+    ;; add_balance
+    var id_who = msg_data~load_uint(64);
+    var amount = msg_data~load_uint(64);
+
+    (users_top, current_users, banned_users) = add_balance(users_top, current_users, banned_users, id_who, amount);
+  }
+
+  save(seqno + 1, key, users_top, current_users, banned_users);
+}

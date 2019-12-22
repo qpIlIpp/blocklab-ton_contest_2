@@ -1,0 +1,92 @@
+;; 2019 Blocklab
+;;
+;; License: MPL-2.0
+
+;; Get methods
+
+;; seqno
+(int, int, int) seqno(int txid) method_id {
+  ;; we use txid for async backend transactioning
+  var (seqno, key, users_top, current_users, banned_users) = load();
+  return (txid, -85143, seqno);
+  ;; second return parameter is method name
+}
+
+;; return [ind] element from list if exist, otherwise return (length, last cell)
+(int, cell) list_get_at (cell list, int ind) impure {
+    if (list.null?()) {
+        return (-1, list);
+    }
+
+    int cur = 0;
+    var ds = list.begin_parse();
+    while ((ds.slice_refs()) & (cur < ind)) {
+        cur = cur + 1;
+        list = ds~load_ref();
+        ds = list.begin_parse();
+    }
+    return (cur, list);
+}
+
+;; get information about sorted users via measured rating
+(int, int, int, int) user_top(int which, int txid) method_id {
+  var (seqno, key, users_top, current_users, banned_users) = load();
+  var (ind, val) = list_get_at(users_top, which);
+  _throw_if(err_bad_index_users_top(), ind != which);
+  (_, int ri, int ri_count) = parse_user_top(val.begin_parse());
+
+  return (txid, -74195, ri, ri_count);
+}
+
+;; get information about exact user - id, current day Ri, currnt day Ri_count, previous day TPi, measured current rating, count of bans and user balance
+(int, int, int, int, int, int, int, int, int) user_info (int id, int txid) method_id {
+  var (seqno, key, users_top, current_users, banned_users) = load();
+  ;; total_Ri, prev_TPi, bans_count, balance
+  (int prev_TPi, cell days, int bans_count, int balance) = load_user(get_user(current_users, id, err_user_was_not_found()));
+  (int ri, int ri_count) = unparse_day(days.begin_parse());
+  int measure_days = measure_days(days);
+  return (txid, -116430, id, ri, ri_count, prev_TPi, measure_days, bans_count, balance);
+}
+
+;; get information about exact user ban. If >0 - user banned for exact days, 0 - user is not banned
+(int, int, int, int) ban_info (int id, int txid) method_id {
+  var (seqno, key, users_top, current_users, banned_users) = load();
+    var (stream, exists) = banned_users.udict_get?(64, id);
+    if (exists) {
+      ;; fs - slice
+      int pnd_count = stream~load_uint(32);
+      return (txid, -110623, id, pnd_count);
+    }
+    return (txid, -110623, id, 0);
+}
+
+;; get information about first user in dictionary
+(int, int, int, int, int, int, int, int, int) first_user_info (int txid) method_id {
+  var (seqno, key, users_top, current_users, banned_users) = load();
+  var id = -1;
+  (id, var stream, var f) = current_users.udict_get_next?(64, id);
+  _throw_unless(err_user_was_not_found(), f);
+  var (txid, _, id, ri, ri_count, prev_TPi, measure_days, bans_count, balance) = user_info(id, txid);
+  return (txid, -111055, id, ri, ri_count, prev_TPi, measure_days, bans_count, balance);
+}
+
+;;debug methods
+(int) prm2 () method_id {
+  var (seqno, key, users_top, current_users, banned_users) = load();
+  return key;
+}
+
+(cell) prm3 () method_id {
+  var (seqno, key, users_top, current_users, banned_users) = load();
+  return users_top;
+}
+
+(cell) prm4 () method_id {
+  var (seqno, key, users_top, current_users, banned_users) = load();
+  return current_users;
+}
+
+(cell) prm5 () method_id {
+  var (seqno, key, users_top, current_users, banned_users) = load();
+  return banned_users;
+}

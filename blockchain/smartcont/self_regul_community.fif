@@ -1,0 +1,1447 @@
+"Asm.fif" include
+// automatically generated from `../ton/crypto/smartcont/stdlib.fc` `blockchain/smartcont/constants.fc` `blockchain/smartcont/transfer.fc` `blockchain/smartcont/days_logic.fc` `blockchain/smartcont/user_processor.fc` `blockchain/smartcont/rate_sort.fc` `blockchain/smartcont/self_regul_community.fc` `blockchain/smartcont/get_methods.fc` 
+PROGRAM{
+  DECLPROC days_count
+  DECLPROC system_donate_comission
+  DECLPROC distribution_percent
+  DECLPROC distribution_recievers_count
+  DECLPROC err_empty_ext_mes
+  DECLPROC err_sign_mismatch
+  DECLPROC err_seqno_mismatch
+  DECLPROC err_unknow_action
+  DECLPROC err_new_empty_code
+  DECLPROC err_bad_index_users_top
+  DECLPROC err_user_was_not_found
+  DECLPROC err_user_exists
+  DECLPROC err_user_banned
+  DECLPROC err_bad_amount
+  DECLPROC err_overdrawn_balance
+  DECLPROC err_cannot_like_yourself
+  DECLPROC err_no_users
+  DECLPROC _throw_if
+  DECLPROC _throw_unless
+  DECLPROC transfer_message
+  DECLPROC send_grams
+  DECLPROC generate_days
+  DECLPROC unparse_day
+  DECLPROC help_day_getter
+  DECLPROC rebuild_days
+  DECLPROC change_first_day
+  DECLPROC measure_days
+  DECLPROC load_user
+  DECLPROC save_user
+  DECLPROC get_user
+  DECLPROC check_no_user
+  DECLPROC set_user
+  DECLPROC create_user
+  DECLPROC ban_user
+  DECLPROC decrease_user_ban
+  DECLPROC add_user
+  DECLPROC proceed_user_rating
+  DECLPROC rate_func
+  DECLPROC like
+  DECLPROC dislike
+  DECLPROC claim
+  DECLPROC add_balance
+  DECLPROC parse_user_top
+  DECLPROC build_user_top
+  DECLPROC delete_get_min_value_rate
+  DECLPROC rebuild_top
+  DECLPROC almost_ln
+  DECLPROC meausure_TPi
+  DECLPROC proceed_user
+  DECLPROC update_users_and_bans
+  DECLPROC pay_to_users
+  DECLPROC distribute
+  DECLPROC donate
+  DECLPROC load
+  DECLPROC save
+  DECLPROC load_short
+  DECLPROC recv_internal
+  DECLPROC recv_external
+  85143 DECLMETHOD seqno
+  DECLPROC list_get_at
+  74195 DECLMETHOD user_top
+  116430 DECLMETHOD user_info
+  110623 DECLMETHOD ban_info
+  111055 DECLMETHOD first_user_info
+  106362 DECLMETHOD prm2
+  102235 DECLMETHOD prm3
+  131004 DECLMETHOD prm4
+  126877 DECLMETHOD prm5
+  days_count PROC:<{
+    // 
+    10 PUSHINT	//  _0=10
+  }>
+  system_donate_comission PROC:<{
+    // 
+    10 PUSHINT	//  _0=10
+  }>
+  distribution_percent PROC:<{
+    // 
+    20 PUSHINT	//  _0=20
+  }>
+  distribution_recievers_count PROC:<{
+    // 
+    15 PUSHINT	//  _0=15
+  }>
+  err_empty_ext_mes PROC:<{
+    // 
+    20 PUSHINT	//  _0=20
+  }>
+  err_sign_mismatch PROC:<{
+    // 
+    21 PUSHINT	//  _0=21
+  }>
+  err_seqno_mismatch PROC:<{
+    // 
+    22 PUSHINT	//  _0=22
+  }>
+  err_unknow_action PROC:<{
+    // 
+    23 PUSHINT	//  _0=23
+  }>
+  err_new_empty_code PROC:<{
+    // 
+    24 PUSHINT	//  _0=24
+  }>
+  err_bad_index_users_top PROC:<{
+    // 
+    25 PUSHINT	//  _0=25
+  }>
+  err_user_was_not_found PROC:<{
+    // 
+    26 PUSHINT	//  _0=26
+  }>
+  err_user_exists PROC:<{
+    // 
+    27 PUSHINT	//  _0=27
+  }>
+  err_user_banned PROC:<{
+    // 
+    28 PUSHINT	//  _0=28
+  }>
+  err_bad_amount PROC:<{
+    // 
+    29 PUSHINT	//  _0=29
+  }>
+  err_overdrawn_balance PROC:<{
+    // 
+    30 PUSHINT	//  _0=30
+  }>
+  err_cannot_like_yourself PROC:<{
+    // 
+    31 PUSHINT	//  _0=31
+  }>
+  err_no_users PROC:<{
+    // 
+    32 PUSHINT	//  _0=32
+  }>
+  _throw_if PROC:<{
+    //  err_code cond
+    IF:<{	//  err_code
+      THROWANY
+    }>ELSE<{
+      DROP	// 
+    }>
+  }>
+  _throw_unless PROC:<{
+    //  err_code cond
+    NOT	//  err_code _2
+    _throw_if CALLDICT
+  }>
+  transfer_message PROC:<{
+    //  addr grams
+    5460547 PUSHINT	//  addr grams _3=5460547
+    0 PUSHINT	//  addr grams _3=5460547 _4=0
+    DUP	//  addr grams _3=5460547 _4=0 _5=0
+    196 PUSHINT	//  addr grams _3=5460547 _4=0 _5=0 _6=196
+    NEWC	//  addr grams _3=5460547 _4=0 _5=0 _6=196 _7
+    9 STU	//  addr grams _3=5460547 _4=0 _5=0 _9
+    SWAP
+    s0 s5 XCHG	//  _5=0 grams _3=5460547 _4=0 _9 addr
+    STSLICER	//  _5=0 grams _3=5460547 _4=0 _10
+    SWAP
+    s0 s3 XCHG	//  _5=0 _4=0 _3=5460547 _10 grams
+    STGRAMS	//  _5=0 _4=0 _3=5460547 _11
+    s1 s3 XCHG	//  _3=5460547 _4=0 _5=0 _11
+    107 STU	//  _3=5460547 _4=0 _13
+    32 STU	//  _3=5460547 _15
+    24 STU	//  msg
+    ENDC	//  _18
+  }>
+  send_grams PROC:<{
+    //  wc addr grams
+    NEWC	//  wc addr grams _4
+    s1 s3 XCHG	//  grams addr wc _4
+    8 STU	//  grams addr _6
+    256 STU	//  grams _8
+    ENDC	//  grams addr_cell
+    CTOS	//  grams _10
+    SWAP	//  _10 grams
+    transfer_message CALLDICT	//  _11
+    3 PUSHINT	//  _11 _12=3
+    SENDRAWMSG
+  }>
+  generate_days PROC:<{
+    // 
+    0 PUSHINT	//  _1=0
+    DUP	//  _1=0 _2=0
+    NEWC	//  _1=0 _2=0 _3
+    32 STI	//  _1=0 _5
+    5 STU	//  _7
+    ENDC	//  res_cell
+    days_count CALLDICT	//  res_cell x
+    WHILE:<{
+      DUP	//  res_cell x x
+      1 GTINT	//  res_cell x _12
+    }>DO<{	//  res_cell x
+      DEC	//  res_cell x
+      0 PUSHINT	//  res_cell x _16=0
+      DUP	//  res_cell x _16=0 _17=0
+      NEWC	//  res_cell x _16=0 _17=0 _18
+      32 STI	//  res_cell x _16=0 _20
+      5 STU	//  res_cell x _22
+      s1 s2 XCHG	//  x res_cell _22
+      STREF	//  x _23
+      ENDC	//  x res_cell
+      SWAP	//  res_cell x
+    }>	//  res_cell x
+    DROP	//  res_cell
+  }>
+  unparse_day PROC:<{
+    //  s
+    32 LDI	//  _1 s
+    5 LDU	//  _1 _10 _9
+    DROP	//  _1 _4
+  }>
+  help_day_getter PROC:<{
+    //  dict at
+    16 PUSHINT	//  dict at _4=16
+    s1 s2 XCHG	//  at dict _4=16
+    DICTUGET
+    NULLSWAPIFNOT	//  _7 _8
+    DROP	//  val
+    unparse_day CALLDICT	//  _9 _10
+  }>
+  rebuild_days PROC:<{
+    //  old_days
+    NEWDICT	//  old_days list_helper
+    1 PUSHINT	//  old_days list_helper index=1
+    days_count CALLDICT	//  old_days list_helper index=1 end_index
+    0 PUSHINT	//  old_days list_helper index=1 end_index _8=0
+    DUP	//  old_days list_helper index=1 end_index _8=0 _9=0
+    NEWC	//  old_days list_helper index=1 end_index _8=0 _9=0 _10
+    32 STI	//  old_days list_helper index=1 end_index _8=0 _12
+    5 STU	//  old_days list_helper index=1 end_index _14
+    0 PUSHINT	//  old_days list_helper index=1 end_index _14 _15=0
+    16 PUSHINT	//  old_days list_helper index=1 end_index _14 _15=0 _16=16
+    s2 s3 XCHG
+    s1 s2 XCHG
+    s1 s5 XCHG	//  old_days end_index index=1 _14 _15=0 list_helper _16=16
+    DICTUSETB	//  old_days end_index index=1 list_helper
+    WHILE:<{
+      OVER
+      s3 PUSH	//  old_days end_index index list_helper index end_index
+      LEQ	//  old_days end_index index list_helper _18
+    }>DO<{	//  old_days end_index index list_helper
+      s3 PUSH	//  old_days end_index index list_helper old_days
+      CTOS	//  old_days end_index index list_helper stream
+      DUP	//  old_days end_index index list_helper stream stream
+      unparse_day CALLDICT	//  old_days end_index index list_helper stream rdi cnt
+      NEWC	//  old_days end_index index list_helper stream rdi cnt _25
+      s1 s2 XCHG	//  old_days end_index index list_helper stream cnt rdi _25
+      32 STI	//  old_days end_index index list_helper stream cnt _27
+      5 STU	//  old_days end_index index list_helper stream _29
+      16 PUSHINT	//  old_days end_index index list_helper stream _29 _30=16
+      s1 s2 XCHG
+      s4 PUSH
+      s0 s2 XCHG
+      s1 s4 XCHG
+      s0 s4 XCHG	//  old_days end_index index stream _29 index list_helper _30=16
+      DICTUSETB	//  old_days end_index index stream list_helper
+      OVER	//  old_days end_index index stream list_helper stream
+      SREFS	//  old_days end_index index stream list_helper _32
+      IF:<{	//  old_days end_index index stream list_helper
+        s4 POP	//  list_helper end_index index stream
+        LDREF	//  list_helper end_index index _69 _68
+        DROP	//  list_helper end_index index old_days
+      }>ELSE<{
+        s0 s4 XCHG
+        SWAP
+        DROP	//  list_helper end_index index old_days
+      }>
+      SWAP	//  list_helper end_index old_days index
+      INC	//  list_helper end_index old_days index
+      s1 s3 XCHG
+      SWAP	//  old_days end_index index list_helper
+    }>	//  old_days end_index index list_helper
+    NIP
+    s2 POP	//  list_helper end_index
+    DUP	//  list_helper end_index end_index
+    DEC	//  list_helper end_index index
+    s2 PUSH
+    OVER	//  list_helper end_index index list_helper index
+    help_day_getter CALLDICT	//  list_helper end_index index rdi cnt
+    NEWC	//  list_helper end_index index rdi cnt _43
+    s1 s2 XCHG	//  list_helper end_index index cnt rdi _43
+    32 STI	//  list_helper end_index index cnt _45
+    5 STU	//  list_helper end_index index _47
+    ENDC	//  list_helper end_index index res_cell
+    WHILE:<{
+      OVER	//  list_helper end_index index res_cell index
+      0 GTINT	//  list_helper end_index index res_cell _50
+    }>DO<{	//  list_helper end_index index res_cell
+      SWAP	//  list_helper end_index res_cell index
+      DEC	//  list_helper end_index res_cell index
+      s3 PUSH
+      OVER	//  list_helper end_index res_cell index list_helper index
+      help_day_getter CALLDICT	//  list_helper end_index res_cell index rdi cnt
+      NEWC	//  list_helper end_index res_cell index rdi cnt _56
+      s1 s2 XCHG	//  list_helper end_index res_cell index cnt rdi _56
+      32 STI	//  list_helper end_index res_cell index cnt _58
+      5 STU	//  list_helper end_index res_cell index _60
+      s1 s2 XCHG	//  list_helper end_index index res_cell _60
+      STREF	//  list_helper end_index index _61
+      ENDC	//  list_helper end_index index res_cell
+    }>	//  list_helper end_index index res_cell
+    NIP	//  list_helper end_index res_cell
+    s1 s2 XCHG
+    s0 s2 XCHG	//  res_cell list_helper end_index
+    help_day_getter CALLDICT	//  res_cell rdi cnt
+  }>
+  change_first_day PROC:<{
+    //  old_days rdi cnt
+    s0 s2 XCHG	//  cnt rdi old_days
+    CTOS	//  cnt rdi stream
+    32 LDU	//  cnt rdi _24 _23
+    NIP	//  cnt rdi stream
+    5 LDU	//  cnt rdi _26 _25
+    NIP	//  cnt rdi stream
+    LDREF	//  cnt rdi _28 _27
+    DROP	//  cnt rdi next
+    NEWC	//  cnt rdi next _16
+    s1 s2 XCHG	//  cnt next rdi _16
+    32 STI	//  cnt next _18
+    s1 s2 XCHG	//  next cnt _18
+    5 STU	//  next _20
+    STREF	//  _21
+    ENDC	//  _22
+  }>
+  measure_days PROC:<{
+    //  days
+    0 PUSHINT	//  days result=0
+    DUP	//  days result=0 index=0
+    days_count CALLDICT	//  days result=0 index=0 end_index
+    WHILE:<{
+      OVER
+      OVER	//  days result index end_index index end_index
+      LESS	//  days result index end_index _7
+    }>DO<{	//  days result index end_index
+      s3 PUSH	//  days result index end_index days
+      CTOS	//  days result index end_index stream
+      DUP	//  days result index end_index stream stream
+      unparse_day CALLDICT	//  days result index end_index stream RDi Day_Likes_Count_i
+      s2 PUSH	//  days result index end_index stream RDi Day_Likes_Count_i stream
+      SREFS	//  days result index end_index stream RDi Day_Likes_Count_i _13
+      IF:<{	//  days result index end_index stream RDi Day_Likes_Count_i
+        s6 POP	//  Day_Likes_Count_i result index end_index stream RDi
+        SWAP	//  Day_Likes_Count_i result index end_index RDi stream
+        LDREF	//  Day_Likes_Count_i result index end_index RDi _27 _26
+        DROP	//  Day_Likes_Count_i result index end_index RDi days
+      }>ELSE<{
+        s0 s6 XCHG
+        s1 s2 XCHG
+        SWAP
+        DROP	//  Day_Likes_Count_i result index end_index RDi days
+      }>
+      s5 PUSH	//  Day_Likes_Count_i result index end_index RDi days Day_Likes_Count_i
+      0 NEQINT	//  Day_Likes_Count_i result index end_index RDi days _17
+      IF:<{	//  Day_Likes_Count_i result index end_index RDi days
+        SWAP	//  Day_Likes_Count_i result index end_index days RDi
+        100 MULCONST	//  Day_Likes_Count_i result index end_index days _19
+        SWAP
+        s0 s5 XCHG	//  days result index end_index _19 Day_Likes_Count_i
+        DIV	//  days result index end_index _20
+        s1 s3 XCHG	//  days end_index index result _20
+        ADD	//  days end_index index result
+      }>ELSE<{
+        s0 s5 XCHG
+        s2 s4 XCHG
+        DROP
+        DROP	//  days end_index index result
+      }>
+      SWAP	//  days end_index result index
+      INC	//  days end_index result index
+      s1 s2 XCHG
+      SWAP	//  days result index end_index
+    }>	//  days result index end_index
+    DROP
+    DROP
+    NIP	//  result
+  }>
+  load_user PROC:<{
+    //  s
+    32 LDU	//  _1 s
+    LDREF	//  _1 _4 s
+    16 LDU	//  _1 _4 _6 s
+    64 LDU	//  _1 _4 _6 _19 _18
+    DROP	//  _1 _4 _6 _9
+  }>
+  save_user PROC:<{
+    //  prev_TPi days bans_count balance
+    NEWC	//  prev_TPi days bans_count balance _4
+    s1 s4 XCHG	//  balance days bans_count prev_TPi _4
+    32 STU	//  balance days bans_count _6
+    s1 s2 XCHG	//  balance bans_count days _6
+    STREF	//  balance bans_count _7
+    16 STU	//  balance _9
+    64 STU	//  _11
+  }>
+  get_user PROC:<{
+    //  users_dict id err_code
+    64 PUSHINT	//  users_dict id err_code _5=64
+    s1 s3 XCHG	//  err_code id users_dict _5=64
+    DICTUGET
+    NULLSWAPIFNOT	//  err_code val f
+    s1 s2 XCHG	//  val err_code f
+    _throw_unless CALLDICT
+  }>
+  check_no_user PROC:<{
+    //  users_dict id err_code
+    64 PUSHINT	//  users_dict id err_code _5=64
+    s1 s3 XCHG	//  err_code id users_dict _5=64
+    DICTUGET
+    NULLSWAPIFNOT	//  err_code _10 _11
+    NIP	//  err_code f
+    OVER	//  err_code f err_code
+    0 NEQINT	//  err_code f _8
+    IF:<{	//  err_code f
+      SWAP
+      OVER	//  f err_code f
+      _throw_if CALLDICT
+    }>ELSE<{
+      SWAP
+      DROP	//  f
+    }>
+  }>
+  set_user PROC:<{
+    //  users_dict id u
+    64 PUSHINT	//  users_dict id u _4=64
+    s1 s3 XCHG	//  u id users_dict _4=64
+    DICTUSETB	//  users_dict
+  }>
+  create_user PROC:<{
+    // 
+    1 PUSHINT	//  _0=1
+    generate_days CALLDICT	//  _0=1 _1
+    0 PUSHINT	//  _0=1 _1 _2=0
+    DUP	//  _0=1 _1 _2=0 _3=0
+    save_user CALLDICT	//  _4
+  }>
+  ban_user PROC:<{
+    //  dict id days_count
+    NEWC	//  dict id days_count _4
+    32 STI	//  dict id _6
+    64 PUSHINT	//  dict id _6 _7=64
+    s1 s3 XCHG	//  _6 id dict _7=64
+    DICTUSETB	//  dict
+  }>
+  decrease_user_ban PROC:<{
+    //  dict id
+    64 PUSHINT	//  dict id _5=64
+    OVER
+    s1 s3 XCHG
+    s0 s3 XCHG	//  id id dict _5=64
+    DICTUDELGET
+    NULLSWAPIFNOT	//  id dict stream exists
+    IF:<{	//  id dict stream
+      32 LDU	//  id dict _22 _21
+      DROP	//  id dict _8
+      DEC	//  id dict pnd_count
+      DUP	//  id dict pnd_count pnd_count
+      0 GTINT	//  id dict pnd_count _14
+      IF:<{	//  id dict pnd_count
+        s1 s2 XCHG	//  dict id pnd_count
+        ban_user CALLDICT	//  dict
+      }>ELSE<{
+        s1 s2 XCHG
+        DROP
+        DROP	//  dict
+      }>
+    }>ELSE<{
+      s1 s2 XCHG
+      DROP
+      DROP	//  dict
+    }>
+  }>
+  add_user PROC:<{
+    //  users_top current_users banned_users id
+    err_user_exists CALLDICT	//  users_top current_users banned_users id _4
+    s3 PUSH
+    SWAP
+    s2 PUSH
+    SWAP	//  users_top current_users banned_users id current_users id _4
+    check_no_user CALLDICT	//  users_top current_users banned_users id _5
+    DROP	//  users_top current_users banned_users id
+    create_user CALLDICT	//  users_top current_users banned_users id _6
+    s2 s3 XCHG	//  users_top banned_users current_users id _6
+    set_user CALLDICT	//  users_top banned_users current_users
+    SWAP	//  users_top current_users banned_users
+  }>
+  proceed_user_rating PROC:<{
+    //  days TPi_was increase
+    s2 PUSH	//  days TPi_was increase days
+    CTOS	//  days TPi_was increase _5
+    unparse_day CALLDICT	//  days TPi_was increase rdi cnt
+    s0 s2 XCHG	//  days TPi_was cnt rdi increase
+    IF:<{	//  days TPi_was cnt rdi
+      SWAP
+      s0 s2 XCHG	//  days cnt rdi TPi_was
+      ADD	//  days cnt rdi
+    }>ELSE<{	//  days TPi_was cnt rdi
+      SWAP
+      s0 s2 XCHG	//  days cnt rdi TPi_was
+      SUB	//  days cnt rdi
+    }>
+    SWAP	//  days rdi cnt
+    INC	//  days rdi cnt
+    s1 s2 XCHG
+    s2 PUSH
+    SWAP	//  rdi days rdi cnt
+    change_first_day CALLDICT	//  rdi days
+  }>
+  rate_func PROC:<{
+    //  users_top current_users banned_users id_from id_to increase
+    err_user_was_not_found CALLDICT	//  users_top current_users banned_users id_from id_to increase _7
+    s5 PUSH
+    s0 s2 XCHG
+    s1 s4 XCHG
+    s0 s4 XCHG	//  users_top current_users banned_users increase id_to current_users id_from _7
+    get_user CALLDICT	//  users_top current_users banned_users increase id_to usr_from
+    err_user_was_not_found CALLDICT	//  users_top current_users banned_users increase id_to usr_from _10
+    s5 PUSH
+    SWAP
+    s3 PUSH
+    SWAP	//  users_top current_users banned_users increase id_to usr_from current_users id_to _10
+    get_user CALLDICT	//  users_top current_users banned_users increase id_to usr_from usr_to
+    SWAP	//  users_top current_users banned_users increase id_to usr_to usr_from
+    load_user CALLDICT	//  users_top current_users banned_users increase id_to usr_to _31 _32 _33 _34
+    DROP
+    DROP
+    DROP	//  users_top current_users banned_users increase id_to usr_to from_prev_TPi
+    SWAP	//  users_top current_users banned_users increase id_to from_prev_TPi usr_to
+    load_user CALLDICT	//  users_top current_users banned_users increase id_to from_prev_TPi prev_TPi to_days to_bans_count balance
+    s1 s4 XCHG
+    s0 s6 XCHG	//  users_top current_users banned_users balance id_to to_bans_count prev_TPi to_days from_prev_TPi increase
+    proceed_user_rating CALLDICT	//  users_top current_users banned_users balance id_to to_bans_count prev_TPi res_Ri to_days
+    SWAP	//  users_top current_users banned_users balance id_to to_bans_count prev_TPi to_days res_Ri
+    0 LESSINT	//  users_top current_users banned_users balance id_to to_bans_count prev_TPi to_days _25
+    IF:<{	//  users_top current_users banned_users balance id_to to_bans_count prev_TPi to_days
+      s0 s2 XCHG	//  users_top current_users banned_users balance id_to to_days prev_TPi to_bans_count
+      INC	//  users_top current_users banned_users balance id_to to_days prev_TPi to_bans_count
+      s0 s5 XCHG
+      s3 PUSH
+      s6 PUSH	//  users_top current_users to_bans_count balance id_to to_days prev_TPi banned_users id_to to_bans_count
+      ban_user CALLDICT	//  users_top current_users to_bans_count balance id_to to_days prev_TPi banned_users
+    }>ELSE<{
+      s2 s5 XCHG
+      s0 s2 XCHG	//  users_top current_users to_bans_count balance id_to to_days prev_TPi banned_users
+    }>
+    s1 s3 XCHG
+    s1 s5 XCHG
+    s0 s4 XCHG	//  users_top current_users id_to banned_users prev_TPi to_days to_bans_count balance
+    save_user CALLDICT	//  users_top current_users id_to banned_users _29
+    s2 s3 XCHG
+    s1 s3 XCHG	//  users_top banned_users current_users id_to _29
+    set_user CALLDICT	//  users_top banned_users current_users
+    SWAP	//  users_top current_users banned_users
+  }>
+  like PROC:<{
+    //  users_top current_users banned_users id_from id_to
+    err_cannot_like_yourself CALLDICT	//  users_top current_users banned_users id_from id_to _5
+    s2 PUSH
+    s2 PUSH	//  users_top current_users banned_users id_from id_to _5 id_from id_to
+    EQUAL	//  users_top current_users banned_users id_from id_to _5 _6
+    _throw_if CALLDICT
+    err_user_banned CALLDICT	//  users_top current_users banned_users id_from id_to _8
+    s3 PUSH
+    SWAP
+    s3 PUSH
+    SWAP	//  users_top current_users banned_users id_from id_to banned_users id_from _8
+    check_no_user CALLDICT	//  users_top current_users banned_users id_from id_to _9
+    DROP	//  users_top current_users banned_users id_from id_to
+    err_user_banned CALLDICT	//  users_top current_users banned_users id_from id_to _10
+    s3 PUSH
+    SWAP
+    s2 PUSH
+    SWAP	//  users_top current_users banned_users id_from id_to banned_users id_to _10
+    check_no_user CALLDICT	//  users_top current_users banned_users id_from id_to _11
+    DROP	//  users_top current_users banned_users id_from id_to
+    TRUE	//  users_top current_users banned_users id_from id_to _12
+    rate_func CALLDICT	//  users_top current_users banned_users
+  }>
+  dislike PROC:<{
+    //  users_top current_users banned_users id_from id_to
+    err_cannot_like_yourself CALLDICT	//  users_top current_users banned_users id_from id_to _5
+    s2 PUSH
+    s2 PUSH	//  users_top current_users banned_users id_from id_to _5 id_from id_to
+    EQUAL	//  users_top current_users banned_users id_from id_to _5 _6
+    _throw_if CALLDICT
+    err_user_banned CALLDICT	//  users_top current_users banned_users id_from id_to _8
+    s3 PUSH
+    SWAP
+    s3 PUSH
+    SWAP	//  users_top current_users banned_users id_from id_to banned_users id_from _8
+    check_no_user CALLDICT	//  users_top current_users banned_users id_from id_to _9
+    DROP	//  users_top current_users banned_users id_from id_to
+    err_user_banned CALLDICT	//  users_top current_users banned_users id_from id_to _10
+    s3 PUSH
+    SWAP
+    s2 PUSH
+    SWAP	//  users_top current_users banned_users id_from id_to banned_users id_to _10
+    check_no_user CALLDICT	//  users_top current_users banned_users id_from id_to _11
+    DROP	//  users_top current_users banned_users id_from id_to
+    FALSE	//  users_top current_users banned_users id_from id_to _12
+    rate_func CALLDICT	//  users_top current_users banned_users
+  }>
+  claim PROC:<{
+    //  users_top current_users banned_users id_who amount wc addr
+    err_bad_amount CALLDICT	//  users_top current_users banned_users id_who amount wc addr _7
+    s3 PUSH	//  users_top current_users banned_users id_who amount wc addr _7 amount
+    0 GTINT	//  users_top current_users banned_users id_who amount wc addr _7 _9
+    _throw_unless CALLDICT
+    err_user_was_not_found CALLDICT	//  users_top current_users banned_users id_who amount wc addr _12
+    s6 PUSH
+    SWAP
+    s5 PUSH
+    SWAP	//  users_top current_users banned_users id_who amount wc addr current_users id_who _12
+    get_user CALLDICT	//  users_top current_users banned_users id_who amount wc addr usr_to
+    load_user CALLDICT	//  users_top current_users banned_users id_who amount wc addr to_prev_TPi to_days to_bans_count to_balance
+    err_overdrawn_balance CALLDICT	//  users_top current_users banned_users id_who amount wc addr to_prev_TPi to_days to_bans_count to_balance _19
+    OVER
+    s8 PUSH	//  users_top current_users banned_users id_who amount wc addr to_prev_TPi to_days to_bans_count to_balance _19 to_balance amount
+    LESS	//  users_top current_users banned_users id_who amount wc addr to_prev_TPi to_days to_bans_count to_balance _19 _20
+    _throw_if CALLDICT
+    s6 PUSH	//  users_top current_users banned_users id_who amount wc addr to_prev_TPi to_days to_bans_count to_balance amount
+    SUB	//  users_top current_users banned_users id_who amount wc addr to_prev_TPi to_days to_bans_count to_balance
+    save_user CALLDICT	//  users_top current_users banned_users id_who amount wc addr _23
+    s2 s6 XCHG
+    s1 s4 XCHG	//  users_top wc banned_users addr amount current_users id_who _23
+    set_user CALLDICT	//  users_top wc banned_users addr amount current_users
+    s2 s4 XCHG
+    s1 s4 XCHG
+    s0 s4 XCHG	//  users_top current_users banned_users wc addr amount
+    send_grams CALLDICT
+  }>
+  add_balance PROC:<{
+    //  users_top current_users banned_users id_who amount
+    err_user_was_not_found CALLDICT	//  users_top current_users banned_users id_who amount _6
+    s4 PUSH
+    SWAP
+    s3 PUSH
+    SWAP	//  users_top current_users banned_users id_who amount current_users id_who _6
+    get_user CALLDICT	//  users_top current_users banned_users id_who amount usr_to
+    load_user CALLDICT	//  users_top current_users banned_users id_who amount to_prev_TPi to_days to_bans_count to_balance
+    SWAP
+    s0 s4 XCHG	//  users_top current_users banned_users id_who to_bans_count to_prev_TPi to_days to_balance amount
+    ADD	//  users_top current_users banned_users id_who to_bans_count to_prev_TPi to_days to_balance
+    s2 s3 XCHG
+    s1 s2 XCHG	//  users_top current_users banned_users id_who to_prev_TPi to_days to_bans_count to_balance
+    save_user CALLDICT	//  users_top current_users banned_users id_who _14
+    s2 s3 XCHG	//  users_top banned_users current_users id_who _14
+    set_user CALLDICT	//  users_top banned_users current_users
+    SWAP	//  users_top current_users banned_users
+  }>
+  parse_user_top PROC:<{
+    //  stream
+    64 LDU	//  _1 stream
+    32 LDI	//  _1 _4 stream
+    s0 s2 XCHG
+    SWAP	//  stream _1 _4
+  }>
+  build_user_top PROC:<{
+    //  id ri
+    NEWC	//  id ri _2
+    s1 s2 XCHG	//  ri id _2
+    64 STU	//  ri _4
+    32 STI	//  _6
+  }>
+  delete_get_min_value_rate PROC:<{
+    //  users
+    -1 PUSHINT	//  users id=-1
+    31 PUSHPOW2DEC	//  users id=-1 min_Ri=2147483647
+    OVER	//  users id=-1 min_Ri=2147483647 min_id=-1
+    UNTIL:<{
+      64 PUSHINT	//  users id min_Ri min_id _10=64
+      s1 s3 XCHG
+      s4 PUSH
+      SWAP	//  users min_id min_Ri id users _10=64
+      DICTUGETNEXT
+      NULLSWAPIFNOT
+      NULLSWAPIFNOT	//  users min_id min_Ri stream id f
+      DUP	//  users min_id min_Ri stream id f f
+      IF:<{	//  users min_id min_Ri stream id f
+        s0 s2 XCHG	//  users min_id min_Ri f id stream
+        load_user CALLDICT	//  users min_id min_Ri f id _34 _35 _36 _37
+        DROP
+        DROP
+        NIP	//  users min_id min_Ri f id days
+        measure_days CALLDICT	//  users min_id min_Ri f id measure
+        DUP
+        s4 PUSH	//  users min_id min_Ri f id measure measure min_Ri
+        LESS	//  users min_id min_Ri f id measure _19
+        IF:<{	//  users min_id min_Ri f id measure
+          s3 POP
+          s3 POP	//  users id min_Ri f
+          s2 PUSH	//  users id min_Ri f min_id
+        }>ELSE<{
+          s1 s4 XCHG
+          DROP	//  users id min_Ri f min_id
+        }>
+      }>ELSE<{
+        s1 s4 XCHG
+        s0 s2 XCHG
+        DROP	//  users id min_Ri f min_id
+      }>
+      SWAP	//  users id min_Ri min_id f
+      NOT	//  users id min_Ri min_id _20
+    }>	//  users id min_Ri min_id
+    s2 POP	//  users min_id min_Ri
+    OVER	//  users min_id min_Ri min_id
+    -1 NEQINT	//  users min_id min_Ri _22
+    IFJMP:<{	//  users min_id min_Ri
+      64 PUSHINT	//  users min_id min_Ri _25=64
+      s2 PUSH
+      s0 s2 XCHG
+      s1 s4 XCHG
+      s0 s4 XCHG	//  min_Ri min_id min_id users _25=64
+      DICTUDEL	//  min_Ri min_id _38 _39
+      DROP	//  min_Ri min_id users
+      TRUE	//  min_Ri min_id users _27
+      s1 s3 XCHG	//  users min_id min_Ri _27
+    }>	//  users min_id min_Ri
+    DROP
+    DROP	//  users
+    0 PUSHINT	//  users _28=0
+    DUP	//  users _28=0 _29=0
+    FALSE	//  users _28=0 _29=0 _30
+  }>
+  rebuild_top PROC:<{
+    //  users
+    0 PUSHINT	//  users count=0
+    NEWC	//  users count=0 _4
+    ENDC	//  users count=0 tail_cell
+    UNTIL:<{
+      s0 s2 XCHG	//  tail_cell count users
+      delete_get_min_value_rate CALLDICT	//  tail_cell count users min_id min_Ri found
+      DUP	//  tail_cell count users min_id min_Ri found found
+      IF:<{	//  tail_cell count users min_id min_Ri found
+        s0 s4 XCHG	//  tail_cell found users min_id min_Ri count
+        INC	//  tail_cell found users min_id min_Ri count
+        s1 s2 XCHG
+        s0 s2 XCHG	//  tail_cell found users count min_id min_Ri
+        build_user_top CALLDICT	//  tail_cell found users count _14
+        s1 s4 XCHG	//  count found users tail_cell _14
+        STREF	//  count found users prev_elem
+        ENDC	//  count found users tail_cell
+      }>ELSE<{
+        s4 s5 XCHG
+        s0 s4 XCHG
+        s0 s2 XCHG
+        DROP
+        DROP	//  count found users tail_cell
+      }>
+      s0 s2 XCHG	//  count tail_cell users found
+      NOT	//  count tail_cell users _17
+      s1 s3 XCHG
+      s1 s2 XCHG	//  users count tail_cell _17
+    }>	//  users count tail_cell
+    s2 POP	//  tail_cell count
+  }>
+  almost_ln PROC:<{
+    //  value
+    DUP	//  value value
+    0 EQINT	//  value _2
+    IFJMP:<{	//  value
+      DROP	// 
+      -1 PUSHINT	//  _3=-1
+    }>	//  value
+    1 RSHIFT#	//  _6
+    almost_ln CALLDICT	//  _7
+    INC	//  _8
+  }>
+  meausure_TPi PROC:<{
+    //  index users_count
+    SWAP	//  users_count index
+    INC	//  users_count _4
+    DIV	//  _5
+    almost_ln CALLDICT	//  log
+    INC	//  _8
+  }>
+  proceed_user PROC:<{
+    //  index id current_users banned_users users_count
+    err_user_was_not_found CALLDICT	//  index id current_users banned_users users_count _6
+    s3 PUSH
+    SWAP
+    s5 PUSH
+    SWAP	//  index id current_users banned_users users_count current_users id _6
+    get_user CALLDICT	//  index id current_users banned_users users_count user_slice
+    load_user CALLDICT	//  index id current_users banned_users users_count _20 _21 _22 _23
+    s3 POP	//  index id current_users banned_users users_count balance days bans_count
+    s1 s7 XCHG
+    s0 s3 XCHG	//  days id current_users banned_users bans_count balance index users_count
+    meausure_TPi CALLDICT	//  days id current_users banned_users bans_count balance prev_TPi
+    s0 s6 XCHG	//  prev_TPi id current_users banned_users bans_count balance days
+    rebuild_days CALLDICT	//  prev_TPi id current_users banned_users bans_count balance _24 _25 _26
+    DROP
+    DROP	//  prev_TPi id current_users banned_users bans_count balance days
+    s3 s6 XCHG
+    s0 s2 XCHG
+    SWAP	//  banned_users id current_users prev_TPi days bans_count balance
+    save_user CALLDICT	//  banned_users id current_users _17
+    s2 PUSH
+    SWAP	//  banned_users id current_users id _17
+    set_user CALLDICT	//  banned_users id current_users
+    s1 s2 XCHG
+    s0 s2 XCHG	//  current_users banned_users id
+    decrease_user_ban CALLDICT	//  current_users banned_users
+  }>
+  update_users_and_bans PROC:<{
+    //  users_top current_users banned_users users_count
+    s3 PUSH	//  users_top current_users banned_users users_count users_top
+    CTOS	//  users_top current_users banned_users users_count stream
+    0 PUSHINT	//  users_top current_users banned_users users_count stream index=0
+    WHILE:<{
+      OVER	//  users_top current_users banned_users users_count stream index stream
+      SREFS	//  users_top current_users banned_users users_count stream index _8
+    }>DO<{	//  users_top current_users banned_users users_count stream index
+      SWAP	//  users_top current_users banned_users users_count index stream
+      parse_user_top CALLDICT	//  users_top current_users banned_users users_count index _18 _19 _20
+      DROP	//  users_top current_users banned_users users_count index stream id
+      s2 PUSH
+      s1 s2 XCHG
+      s1 s6 XCHG
+      s0 s5 XCHG
+      s4 PUSH	//  users_top stream index users_count index id current_users banned_users users_count
+      proceed_user CALLDICT	//  users_top stream index users_count current_users banned_users
+      s0 s4 XCHG	//  users_top banned_users index users_count current_users stream
+      LDREF	//  users_top banned_users index users_count current_users _24 _23
+      DROP	//  users_top banned_users index users_count current_users _13
+      CTOS	//  users_top banned_users index users_count current_users stream
+      s0 s3 XCHG	//  users_top banned_users stream users_count current_users index
+      INC	//  users_top banned_users stream users_count current_users index
+      s1 s4 XCHG
+      s1 s3 XCHG	//  users_top current_users banned_users users_count stream index
+    }>	//  users_top current_users banned_users users_count stream index
+    DROP
+    DROP
+    DROP	//  users_top current_users banned_users
+  }>
+  pay_to_users PROC:<{
+    //  users_top current_users amount
+    s2 PUSH	//  users_top current_users amount users_top
+    CTOS	//  users_top current_users amount stream
+    0 PUSHINT	//  users_top current_users amount stream curr_count=0
+    distribution_recievers_count CALLDICT	//  users_top current_users amount stream curr_count=0 max_count
+    OVER	//  users_top current_users amount stream curr_count=0 max_count TPi_Sum=0
+    WHILE:<{
+      s3 PUSH	//  users_top current_users amount stream curr_count max_count TPi_Sum stream
+      SREFS	//  users_top current_users amount stream curr_count max_count TPi_Sum _11
+      s3 PUSH
+      s3 PUSH	//  users_top current_users amount stream curr_count max_count TPi_Sum _11 curr_count max_count
+      LESS	//  users_top current_users amount stream curr_count max_count TPi_Sum _11 _12
+      AND	//  users_top current_users amount stream curr_count max_count TPi_Sum _13
+    }>DO<{	//  users_top current_users amount stream curr_count max_count TPi_Sum
+      s0 s3 XCHG	//  users_top current_users amount TPi_Sum curr_count max_count stream
+      parse_user_top CALLDICT	//  users_top current_users amount TPi_Sum curr_count max_count _59 _60 _61
+      DROP	//  users_top current_users amount TPi_Sum curr_count max_count stream id
+      err_user_was_not_found CALLDICT	//  users_top current_users amount TPi_Sum curr_count max_count stream id _18
+      s7 PUSH
+      s0 s2 XCHG
+      SWAP	//  users_top current_users amount TPi_Sum curr_count max_count stream current_users id _18
+      get_user CALLDICT	//  users_top current_users amount TPi_Sum curr_count max_count stream user_slice
+      load_user CALLDICT	//  users_top current_users amount TPi_Sum curr_count max_count stream _62 _63 _64 _65
+      DROP
+      DROP
+      DROP	//  users_top current_users amount TPi_Sum curr_count max_count stream user_TPi
+      s1 s4 XCHG	//  users_top current_users amount stream curr_count max_count TPi_Sum user_TPi
+      ADD	//  users_top current_users amount stream curr_count max_count TPi_Sum
+      s0 s2 XCHG	//  users_top current_users amount stream TPi_Sum max_count curr_count
+      INC	//  users_top current_users amount stream TPi_Sum max_count curr_count
+      s0 s3 XCHG	//  users_top current_users amount curr_count TPi_Sum max_count stream
+      LDREF	//  users_top current_users amount curr_count TPi_Sum max_count _67 _66
+      DROP	//  users_top current_users amount curr_count TPi_Sum max_count _28
+      CTOS	//  users_top current_users amount curr_count TPi_Sum max_count stream
+      s0 s3 XCHG
+      s0 s2 XCHG	//  users_top current_users amount stream curr_count max_count TPi_Sum
+    }>	//  users_top current_users amount stream curr_count max_count TPi_Sum
+    s3 POP	//  users_top current_users amount TPi_Sum curr_count max_count
+    SWAP	//  users_top current_users amount TPi_Sum max_count curr_count
+    0 EQINT	//  users_top current_users amount TPi_Sum max_count _32
+    IFJMP:<{	//  users_top current_users amount TPi_Sum max_count
+      DROP
+      DROP
+      DROP
+      NIP	//  current_users
+    }>	//  users_top current_users amount TPi_Sum max_count
+    s0 s4 XCHG	//  max_count current_users amount TPi_Sum users_top
+    CTOS	//  max_count current_users amount TPi_Sum stream
+    0 PUSHINT	//  max_count current_users amount TPi_Sum stream curr_count=0
+    WHILE:<{
+      OVER	//  max_count current_users amount TPi_Sum stream curr_count stream
+      SREFS	//  max_count current_users amount TPi_Sum stream curr_count _35
+      OVER
+      s7 PUSH	//  max_count current_users amount TPi_Sum stream curr_count _35 curr_count max_count
+      LESS	//  max_count current_users amount TPi_Sum stream curr_count _35 _36
+      AND	//  max_count current_users amount TPi_Sum stream curr_count _37
+    }>DO<{	//  max_count current_users amount TPi_Sum stream curr_count
+      SWAP	//  max_count current_users amount TPi_Sum curr_count stream
+      parse_user_top CALLDICT	//  max_count current_users amount TPi_Sum curr_count _68 _69 _70
+      DROP	//  max_count current_users amount TPi_Sum curr_count stream id
+      err_user_was_not_found CALLDICT	//  max_count current_users amount TPi_Sum curr_count stream id _42
+      s6 PUSH
+      SWAP
+      s2 PUSH
+      SWAP	//  max_count current_users amount TPi_Sum curr_count stream id current_users id _42
+      get_user CALLDICT	//  max_count current_users amount TPi_Sum curr_count stream id user_slice
+      load_user CALLDICT	//  max_count current_users amount TPi_Sum curr_count stream id prev_TPi days bans_count balance
+      s8 PUSH
+      s4 PUSH	//  max_count current_users amount TPi_Sum curr_count stream id prev_TPi days bans_count balance amount prev_TPi
+      MUL	//  max_count current_users amount TPi_Sum curr_count stream id prev_TPi days bans_count balance _49
+      s8 PUSH	//  max_count current_users amount TPi_Sum curr_count stream id prev_TPi days bans_count balance _49 TPi_Sum
+      DIV	//  max_count current_users amount TPi_Sum curr_count stream id prev_TPi days bans_count balance _50
+      ADD	//  max_count current_users amount TPi_Sum curr_count stream id prev_TPi days bans_count balance
+      save_user CALLDICT	//  max_count current_users amount TPi_Sum curr_count stream id _52
+      s2 s6 XCHG	//  max_count stream amount TPi_Sum curr_count current_users id _52
+      set_user CALLDICT	//  max_count stream amount TPi_Sum curr_count current_users
+      SWAP	//  max_count stream amount TPi_Sum current_users curr_count
+      INC	//  max_count stream amount TPi_Sum current_users curr_count
+      s0 s4 XCHG	//  max_count curr_count amount TPi_Sum current_users stream
+      LDREF	//  max_count curr_count amount TPi_Sum current_users _76 _75
+      DROP	//  max_count curr_count amount TPi_Sum current_users _56
+      CTOS	//  max_count curr_count amount TPi_Sum current_users stream
+      s1 s4 XCHG
+      SWAP	//  max_count current_users amount TPi_Sum stream curr_count
+    }>	//  max_count current_users amount TPi_Sum stream curr_count
+    DROP
+    DROP
+    DROP
+    DROP
+    NIP	//  current_users
+  }>
+  distribute PROC:<{
+    //  users_top current_users banned_users amount
+    s3 POP	//  amount current_users banned_users
+    OVER	//  amount current_users banned_users current_users
+    rebuild_top CALLDICT	//  amount current_users banned_users users_top users_count
+    s1 s3 XCHG
+    s1 s2 XCHG	//  amount users_top current_users banned_users users_count
+    update_users_and_bans CALLDICT	//  amount users_top current_users banned_users
+    s2 PUSH
+    s0 s2 XCHG
+    SWAP
+    s0 s4 XCHG	//  banned_users users_top users_top current_users amount
+    pay_to_users CALLDICT	//  banned_users users_top current_users
+    s1 s2 XCHG
+    SWAP	//  users_top current_users banned_users
+  }>
+  donate PROC:<{
+    //  users_top current_users banned_users id_from id_to amount
+    err_cannot_like_yourself CALLDICT	//  users_top current_users banned_users id_from id_to amount _6
+    s3 PUSH
+    s3 PUSH	//  users_top current_users banned_users id_from id_to amount _6 id_from id_to
+    EQUAL	//  users_top current_users banned_users id_from id_to amount _6 _7
+    _throw_if CALLDICT
+    err_user_was_not_found CALLDICT	//  users_top current_users banned_users id_from id_to amount _10
+    s5 PUSH
+    SWAP
+    s4 PUSH
+    SWAP	//  users_top current_users banned_users id_from id_to amount current_users id_from _10
+    get_user CALLDICT	//  users_top current_users banned_users id_from id_to amount usr_from
+    err_user_was_not_found CALLDICT	//  users_top current_users banned_users id_from id_to amount usr_from _13
+    s6 PUSH
+    SWAP
+    s4 PUSH
+    SWAP	//  users_top current_users banned_users id_from id_to amount usr_from current_users id_to _13
+    get_user CALLDICT	//  users_top current_users banned_users id_from id_to amount usr_from usr_to
+    SWAP	//  users_top current_users banned_users id_from id_to amount usr_to usr_from
+    load_user CALLDICT	//  users_top current_users banned_users id_from id_to amount usr_to fr_prev_TPi fr_days fr_bans_count fr_balance
+    s0 s4 XCHG	//  users_top current_users banned_users id_from id_to amount fr_balance fr_prev_TPi fr_days fr_bans_count usr_to
+    load_user CALLDICT	//  users_top current_users banned_users id_from id_to amount fr_balance fr_prev_TPi fr_days fr_bans_count to_prev_TPi to_days to_bans_count to_balance
+    0 PUSHINT	//  users_top current_users banned_users id_from id_to amount fr_balance fr_prev_TPi fr_days fr_bans_count to_prev_TPi to_days to_bans_count to_balance _26=0
+    s12 PUSH
+    SWAP
+    s12 PUSH
+    SWAP	//  users_top current_users banned_users id_from id_to amount fr_balance fr_prev_TPi fr_days fr_bans_count to_prev_TPi to_days to_bans_count to_balance banned_users id_from _26=0
+    check_no_user CALLDICT	//  users_top current_users banned_users id_from id_to amount fr_balance fr_prev_TPi fr_days fr_bans_count to_prev_TPi to_days to_bans_count to_balance _27
+    NOT	//  users_top current_users banned_users id_from id_to amount fr_balance fr_prev_TPi fr_days fr_bans_count to_prev_TPi to_days to_bans_count to_balance not_banned_from
+    0 PUSHINT	//  users_top current_users banned_users id_from id_to amount fr_balance fr_prev_TPi fr_days fr_bans_count to_prev_TPi to_days to_bans_count to_balance not_banned_from _30=0
+    s13 PUSH
+    SWAP
+    s12 PUSH
+    SWAP	//  users_top current_users banned_users id_from id_to amount fr_balance fr_prev_TPi fr_days fr_bans_count to_prev_TPi to_days to_bans_count to_balance not_banned_from banned_users id_to _30=0
+    check_no_user CALLDICT	//  users_top current_users banned_users id_from id_to amount fr_balance fr_prev_TPi fr_days fr_bans_count to_prev_TPi to_days to_bans_count to_balance not_banned_from _31
+    NOT	//  users_top current_users banned_users id_from id_to amount fr_balance fr_prev_TPi fr_days fr_bans_count to_prev_TPi to_days to_bans_count to_balance not_banned_from not_banned_to
+    AND	//  users_top current_users banned_users id_from id_to amount fr_balance fr_prev_TPi fr_days fr_bans_count to_prev_TPi to_days to_bans_count to_balance _33
+    IF:<{	//  users_top current_users banned_users id_from id_to amount fr_balance fr_prev_TPi fr_days fr_bans_count to_prev_TPi to_days to_bans_count to_balance
+      TRUE	//  users_top current_users banned_users id_from id_to amount fr_balance fr_prev_TPi fr_days fr_bans_count to_prev_TPi to_days to_bans_count to_balance _34
+      s3 s14 XCHG
+      s2 s13 XCHG
+      s1 s12 XCHG
+      s11 PUSH
+      SWAP
+      s11 PUSH
+      SWAP	//  to_days to_bans_count to_balance id_from id_to amount fr_balance fr_prev_TPi fr_days fr_bans_count to_prev_TPi users_top current_users banned_users id_from id_to _34
+      rate_func CALLDICT	//  to_days to_bans_count to_balance id_from id_to amount fr_balance fr_prev_TPi fr_days fr_bans_count to_prev_TPi users_top current_users banned_users
+    }>ELSE<{
+      s2 s13 XCHG
+      s1 s12 XCHG
+      s0 s11 XCHG	//  to_days to_bans_count to_balance id_from id_to amount fr_balance fr_prev_TPi fr_days fr_bans_count to_prev_TPi users_top current_users banned_users
+    }>
+    err_bad_amount CALLDICT	//  to_days to_bans_count to_balance id_from id_to amount fr_balance fr_prev_TPi fr_days fr_bans_count to_prev_TPi users_top current_users banned_users _36
+    s9 PUSH	//  to_days to_bans_count to_balance id_from id_to amount fr_balance fr_prev_TPi fr_days fr_bans_count to_prev_TPi users_top current_users banned_users _36 amount
+    0 GTINT	//  to_days to_bans_count to_balance id_from id_to amount fr_balance fr_prev_TPi fr_days fr_bans_count to_prev_TPi users_top current_users banned_users _36 _38
+    _throw_unless CALLDICT
+    err_overdrawn_balance CALLDICT	//  to_days to_bans_count to_balance id_from id_to amount fr_balance fr_prev_TPi fr_days fr_bans_count to_prev_TPi users_top current_users banned_users _40
+    s8 PUSH
+    s10 PUSH	//  to_days to_bans_count to_balance id_from id_to amount fr_balance fr_prev_TPi fr_days fr_bans_count to_prev_TPi users_top current_users banned_users _40 fr_balance amount
+    LESS	//  to_days to_bans_count to_balance id_from id_to amount fr_balance fr_prev_TPi fr_days fr_bans_count to_prev_TPi users_top current_users banned_users _40 _41
+    _throw_if CALLDICT
+    s0 s7 XCHG
+    s8 PUSH	//  to_days to_bans_count to_balance id_from id_to amount banned_users fr_prev_TPi fr_days fr_bans_count to_prev_TPi users_top current_users fr_balance amount
+    SUB	//  to_days to_bans_count to_balance id_from id_to amount banned_users fr_prev_TPi fr_days fr_bans_count to_prev_TPi users_top current_users fr_balance
+    distribution_percent CALLDICT	//  to_days to_bans_count to_balance id_from id_to amount banned_users fr_prev_TPi fr_days fr_bans_count to_prev_TPi users_top current_users fr_balance _45
+    s9 PUSH
+    SWAP	//  to_days to_bans_count to_balance id_from id_to amount banned_users fr_prev_TPi fr_days fr_bans_count to_prev_TPi users_top current_users fr_balance amount _45
+    MUL	//  to_days to_bans_count to_balance id_from id_to amount banned_users fr_prev_TPi fr_days fr_bans_count to_prev_TPi users_top current_users fr_balance _46
+    100 PUSHINT	//  to_days to_bans_count to_balance id_from id_to amount banned_users fr_prev_TPi fr_days fr_bans_count to_prev_TPi users_top current_users fr_balance _46 _47=100
+    DIV	//  to_days to_bans_count to_balance id_from id_to amount banned_users fr_prev_TPi fr_days fr_bans_count to_prev_TPi users_top current_users fr_balance distrib_amount
+    system_donate_comission CALLDICT	//  to_days to_bans_count to_balance id_from id_to amount banned_users fr_prev_TPi fr_days fr_bans_count to_prev_TPi users_top current_users fr_balance distrib_amount _50
+    s10 PUSH
+    SWAP	//  to_days to_bans_count to_balance id_from id_to amount banned_users fr_prev_TPi fr_days fr_bans_count to_prev_TPi users_top current_users fr_balance distrib_amount amount _50
+    MUL	//  to_days to_bans_count to_balance id_from id_to amount banned_users fr_prev_TPi fr_days fr_bans_count to_prev_TPi users_top current_users fr_balance distrib_amount _51
+    100 PUSHINT	//  to_days to_bans_count to_balance id_from id_to amount banned_users fr_prev_TPi fr_days fr_bans_count to_prev_TPi users_top current_users fr_balance distrib_amount _51 _52=100
+    DIV	//  to_days to_bans_count to_balance id_from id_to amount banned_users fr_prev_TPi fr_days fr_bans_count to_prev_TPi users_top current_users fr_balance distrib_amount system_comission
+    s1 s13 XCHG
+    s0 s10 XCHG	//  to_days to_bans_count distrib_amount id_from id_to system_comission banned_users fr_prev_TPi fr_days fr_bans_count to_prev_TPi users_top current_users fr_balance to_balance amount
+    ADD	//  to_days to_bans_count distrib_amount id_from id_to system_comission banned_users fr_prev_TPi fr_days fr_bans_count to_prev_TPi users_top current_users fr_balance _54
+    s12 PUSH	//  to_days to_bans_count distrib_amount id_from id_to system_comission banned_users fr_prev_TPi fr_days fr_bans_count to_prev_TPi users_top current_users fr_balance _54 distrib_amount
+    SUB	//  to_days to_bans_count distrib_amount id_from id_to system_comission banned_users fr_prev_TPi fr_days fr_bans_count to_prev_TPi users_top current_users fr_balance _55
+    SWAP
+    s0 s9 XCHG	//  to_days to_bans_count distrib_amount id_from id_to fr_balance banned_users fr_prev_TPi fr_days fr_bans_count to_prev_TPi users_top current_users _55 system_comission
+    SUB	//  to_days to_bans_count distrib_amount id_from id_to fr_balance banned_users fr_prev_TPi fr_days fr_bans_count to_prev_TPi users_top current_users to_balance
+    s3 s6 XCHG
+    s2 s5 XCHG
+    s1 s4 XCHG
+    s0 s8 XCHG	//  to_days to_bans_count distrib_amount id_from id_to to_balance banned_users to_prev_TPi users_top current_users fr_prev_TPi fr_days fr_bans_count fr_balance
+    save_user CALLDICT	//  to_days to_bans_count distrib_amount id_from id_to to_balance banned_users to_prev_TPi users_top current_users _57
+    s1 s2 XCHG
+    s1 s7 XCHG	//  to_days to_bans_count distrib_amount users_top id_to to_balance banned_users to_prev_TPi current_users id_from _57
+    set_user CALLDICT	//  to_days to_bans_count distrib_amount users_top id_to to_balance banned_users to_prev_TPi current_users
+    s1 s3 XCHG
+    s2 s8 XCHG
+    s1 s7 XCHG
+    s0 s7 XCHG	//  banned_users current_users distrib_amount users_top id_to to_prev_TPi to_days to_bans_count to_balance
+    save_user CALLDICT	//  banned_users current_users distrib_amount users_top id_to _59
+    s2 s4 XCHG	//  banned_users users_top distrib_amount current_users id_to _59
+    set_user CALLDICT	//  banned_users users_top distrib_amount current_users
+    s2 PUSH
+    s0 s2 XCHG	//  banned_users users_top users_top current_users distrib_amount
+    pay_to_users CALLDICT	//  banned_users users_top current_users
+    s1 s2 XCHG
+    SWAP	//  users_top current_users banned_users
+  }>
+  load PROC:<{
+    // 
+    c4 PUSH	//  _1
+    CTOS	//  ds
+    32 LDU	//  _3 ds
+    256 LDU	//  _3 _6 ds
+    LDREF	//  _3 _6 _9 ds
+    LDDICT	//  _3 _6 _9 _11 ds
+    LDDICT	//  _3 _6 _9 _11 _24 _23
+    DROP	//  _3 _6 _9 _11 _13
+  }>
+  save PROC:<{
+    //  seqno key users_top current_users banned_users
+    NEWC	//  seqno key users_top current_users banned_users _5
+    s1 s5 XCHG	//  banned_users key users_top current_users seqno _5
+    32 STU	//  banned_users key users_top current_users _7
+    s1 s3 XCHG	//  banned_users current_users users_top key _7
+    256 STU	//  banned_users current_users users_top _9
+    STREF	//  banned_users current_users _10
+    STDICT	//  banned_users _11
+    STDICT	//  _12
+    ENDC	//  _13
+    c4 POP
+  }>
+  load_short PROC:<{
+    // 
+    c4 PUSH	//  _1
+    CTOS	//  ds
+    32 LDU	//  _3 ds
+    256 LDU	//  _3 _12 _11
+    DROP	//  _3 _6
+  }>
+  recv_internal PROC:<{
+    //  in_msg
+    DROP	// 
+  }>
+  recv_external PROC:<{
+    //  in_msg
+    DEBUGON
+    err_empty_ext_mes CALLDICT	//  in_msg _2
+    OVER	//  in_msg _2 in_msg
+    SEMPTY	//  in_msg _2 _3
+    _throw_if CALLDICT
+    LDREF	//  _6 in_msg
+    SWAP	//  in_msg _6
+    CTOS	//  in_msg msg_data
+    DUP	//  in_msg msg_data slice_to_sign
+    9 PUSHPOW2	//  in_msg msg_data slice_to_sign _12=512
+    s1 s3 XCHG	//  slice_to_sign msg_data in_msg _12=512
+    LDSLICEX	//  slice_to_sign msg_data _164 _163
+    DROP	//  slice_to_sign msg_data signature
+    load_short CALLDICT	//  slice_to_sign msg_data signature seqno key
+    err_sign_mismatch CALLDICT	//  slice_to_sign msg_data signature seqno key _17
+    s0 s5 XCHG	//  _17 msg_data signature seqno key slice_to_sign
+    HASHSU	//  _17 msg_data signature seqno key _18
+    SWAP
+    s0 s3 XCHG
+    s3 PUSH	//  _17 msg_data key seqno _18 signature key
+    CHKSIGNU	//  _17 msg_data key seqno _19
+    s1 s4 XCHG	//  seqno msg_data key _17 _19
+    _throw_unless CALLDICT
+    SWAP	//  seqno key msg_data
+    32 LDU	//  seqno key signed_seq msg_data
+    32 LDU	//  seqno key signed_seq action msg_data
+    err_seqno_mismatch CALLDICT	//  seqno key signed_seq action msg_data _29
+    s3 PUSH
+    s6 PUSH	//  seqno key signed_seq action msg_data _29 signed_seq seqno
+    LESS	//  seqno key signed_seq action msg_data _29 _30
+    _throw_if CALLDICT
+    ACCEPT
+    OVER	//  seqno key signed_seq action msg_data action
+    3 EQINT	//  seqno key signed_seq action msg_data _34
+    IFJMP:<{	//  seqno key signed_seq action msg_data
+      DROP
+      DROP	//  seqno key signed_seq
+      err_seqno_mismatch CALLDICT	//  seqno key signed_seq _35
+      OVER
+      SWAP
+      s0 s4 XCHG	//  _35 key signed_seq signed_seq seqno
+      NEQ	//  _35 key signed_seq _36
+      s1 s3 XCHG	//  signed_seq key _35 _36
+      _throw_if CALLDICT
+      NEWC	//  signed_seq key _39
+      ENDC	//  signed_seq key empty
+      s0 s2 XCHG	//  empty key signed_seq
+      INC	//  empty key _42
+      NEWDICT	//  empty key _42 _43
+      NEWDICT	//  empty key _42 _43 _44
+      s2 s4 XCHG	//  _42 key empty _43 _44
+      save CALLDICT
+    }>	//  seqno key signed_seq action msg_data
+    s3 POP
+    s3 POP	//  action msg_data signed_seq
+    load CALLDICT	//  action msg_data signed_seq _171 _172 _173 _174 _175
+    s4 POP	//  action msg_data seqno banned_users key users_top current_users
+    err_unknow_action CALLDICT	//  action msg_data seqno banned_users key users_top current_users _52
+    s7 PUSH	//  action msg_data seqno banned_users key users_top current_users _52 action
+    10 GTINT	//  action msg_data seqno banned_users key users_top current_users _52 _54
+    _throw_if CALLDICT
+    s6 PUSH	//  action msg_data seqno banned_users key users_top current_users action
+    0 EQINT	//  action msg_data seqno banned_users key users_top current_users _57
+    DROP	//  action msg_data seqno banned_users key users_top current_users
+    s6 PUSH	//  action msg_data seqno banned_users key users_top current_users action
+    1 EQINT	//  action msg_data seqno banned_users key users_top current_users _59
+    IF:<{	//  action msg_data seqno banned_users key users_top current_users
+      s0 s5 XCHG	//  action current_users seqno banned_users key users_top msg_data
+      LDREF	//  action current_users seqno banned_users key users_top code msg_data
+      err_new_empty_code CALLDICT	//  action current_users seqno banned_users key users_top code msg_data _63
+      s2 PUSH	//  action current_users seqno banned_users key users_top code msg_data _63 code
+      ISNULL	//  action current_users seqno banned_users key users_top code msg_data _63 _64
+      _throw_if CALLDICT
+      SWAP	//  action current_users seqno banned_users key users_top msg_data code
+      SETCODE
+    }>ELSE<{
+      s0 s5 XCHG	//  action current_users seqno banned_users key users_top msg_data
+    }>
+    s6 PUSH	//  action current_users seqno banned_users key users_top msg_data action
+    2 EQINT	//  action current_users seqno banned_users key users_top msg_data _68
+    IF:<{	//  action current_users seqno banned_users key users_top msg_data
+      8 LDU	//  action current_users seqno banned_users key users_top mode msg_data
+      LDREF	//  action current_users seqno banned_users key users_top mode msg msg_data
+      s0 s2 XCHG	//  action current_users seqno banned_users key users_top msg_data msg mode
+      SENDRAWMSG
+    }>	//  action current_users seqno banned_users key users_top msg_data
+    s6 PUSH	//  action current_users seqno banned_users key users_top msg_data action
+    4 EQINT	//  action current_users seqno banned_users key users_top msg_data _78
+    IF:<{	//  action current_users seqno banned_users key users_top msg_data
+      64 LDU	//  action current_users seqno banned_users key users_top id msg_data
+      s2 s3 XCHG
+      s2 s6 XCHG
+      s1 s4 XCHG
+      s0 s4 XCHG	//  action key seqno msg_data users_top current_users banned_users id
+      add_user CALLDICT	//  action key seqno msg_data users_top current_users banned_users
+    }>ELSE<{
+      s2 s5 XCHG
+      s0 s3 XCHG
+      s1 s2 XCHG	//  action key seqno msg_data users_top current_users banned_users
+    }>
+    s6 PUSH	//  action key seqno msg_data users_top current_users banned_users action
+    5 EQINT	//  action key seqno msg_data users_top current_users banned_users _85
+    IF:<{	//  action key seqno msg_data users_top current_users banned_users
+      s0 s3 XCHG	//  action key seqno banned_users users_top current_users msg_data
+      64 LDU	//  action key seqno banned_users users_top current_users id_from msg_data
+      64 LDU	//  action key seqno banned_users users_top current_users id_from id_to msg_data
+      s2 s5 XCHG
+      s1 s5 XCHG
+      s0 s5 XCHG	//  action key seqno msg_data users_top current_users banned_users id_from id_to
+      like CALLDICT	//  action key seqno msg_data users_top current_users banned_users
+    }>	//  action key seqno msg_data users_top current_users banned_users
+    s6 PUSH	//  action key seqno msg_data users_top current_users banned_users action
+    6 EQINT	//  action key seqno msg_data users_top current_users banned_users _96
+    IF:<{	//  action key seqno msg_data users_top current_users banned_users
+      s0 s3 XCHG	//  action key seqno banned_users users_top current_users msg_data
+      64 LDU	//  action key seqno banned_users users_top current_users id_from msg_data
+      64 LDU	//  action key seqno banned_users users_top current_users id_from id_to msg_data
+      s2 s5 XCHG
+      s1 s5 XCHG
+      s0 s5 XCHG	//  action key seqno msg_data users_top current_users banned_users id_from id_to
+      dislike CALLDICT	//  action key seqno msg_data users_top current_users banned_users
+    }>	//  action key seqno msg_data users_top current_users banned_users
+    s6 PUSH	//  action key seqno msg_data users_top current_users banned_users action
+    7 EQINT	//  action key seqno msg_data users_top current_users banned_users _107
+    IF:<{	//  action key seqno msg_data users_top current_users banned_users
+      s0 s3 XCHG	//  action key seqno banned_users users_top current_users msg_data
+      64 LDU	//  action key seqno banned_users users_top current_users id_from msg_data
+      64 LDU	//  action key seqno banned_users users_top current_users id_from id_to msg_data
+      64 LDU	//  action key seqno banned_users users_top current_users id_from id_to amount msg_data
+      s3 s6 XCHG
+      s2 s6 XCHG
+      s1 s6 XCHG
+      s0 s6 XCHG	//  action key seqno msg_data users_top current_users banned_users id_from id_to amount
+      donate CALLDICT	//  action key seqno msg_data users_top current_users banned_users
+    }>	//  action key seqno msg_data users_top current_users banned_users
+    s6 PUSH	//  action key seqno msg_data users_top current_users banned_users action
+    8 EQINT	//  action key seqno msg_data users_top current_users banned_users _122
+    IF:<{	//  action key seqno msg_data users_top current_users banned_users
+      s0 s3 XCHG	//  action key seqno banned_users users_top current_users msg_data
+      64 LDU	//  action key seqno banned_users users_top current_users amount msg_data
+      s1 s4 XCHG
+      s0 s4 XCHG	//  action key seqno msg_data users_top current_users banned_users amount
+      distribute CALLDICT	//  action key seqno msg_data users_top current_users banned_users
+    }>	//  action key seqno msg_data users_top current_users banned_users
+    s6 PUSH	//  action key seqno msg_data users_top current_users banned_users action
+    9 EQINT	//  action key seqno msg_data users_top current_users banned_users _129
+    IF:<{	//  action key seqno msg_data users_top current_users banned_users
+      s0 s3 XCHG	//  action key seqno banned_users users_top current_users msg_data
+      64 LDU	//  action key seqno banned_users users_top current_users id_who msg_data
+      64 LDU	//  action key seqno banned_users users_top current_users id_who amount msg_data
+      8 LDU	//  action key seqno banned_users users_top current_users id_who amount wc msg_data
+      256 LDU	//  action key seqno banned_users users_top current_users id_who amount wc addr msg_data
+      s4 s7 XCHG
+      s3 s7 XCHG
+      s2 s7 XCHG
+      s1 s7 XCHG
+      s0 s7 XCHG	//  action key seqno msg_data users_top current_users banned_users id_who amount wc addr
+      claim CALLDICT	//  action key seqno msg_data users_top current_users banned_users
+    }>	//  action key seqno msg_data users_top current_users banned_users
+    s0 s6 XCHG	//  banned_users key seqno msg_data users_top current_users action
+    10 EQINT	//  banned_users key seqno msg_data users_top current_users _148
+    IF:<{	//  banned_users key seqno msg_data users_top current_users
+      s0 s2 XCHG	//  banned_users key seqno current_users users_top msg_data
+      64 LDU	//  banned_users key seqno current_users users_top id_who msg_data
+      64 LDU	//  banned_users key seqno current_users users_top id_who _229 _228
+      DROP	//  banned_users key seqno current_users users_top id_who amount
+      s2 s4 XCHG
+      s2 s6 XCHG	//  seqno key users_top current_users banned_users id_who amount
+      add_balance CALLDICT	//  seqno key users_top current_users banned_users
+    }>ELSE<{
+      s3 s5 XCHG
+      s1 s3 XCHG
+      s0 s2 XCHG
+      DROP	//  seqno key users_top current_users banned_users
+    }>
+    s0 s4 XCHG	//  banned_users key users_top current_users seqno
+    INC	//  banned_users key users_top current_users _159
+    s0 s4 XCHG	//  _159 key users_top current_users banned_users
+    save CALLDICT
+  }>
+  seqno PROC:<{
+    //  txid
+    load CALLDICT	//  txid _8 _9 _10 _11 _12
+    DROP
+    DROP
+    DROP
+    DROP	//  txid seqno
+    -85143 PUSHINT	//  txid seqno _7=-85143
+    SWAP	//  txid _7=-85143 seqno
+  }>
+  list_get_at PROC:<{
+    //  list ind
+    OVER	//  list ind list
+    ISNULL	//  list ind _2
+    IFJMP:<{	//  list ind
+      DROP	//  list
+      -1 PUSHINT	//  list _3=-1
+      SWAP	//  _3=-1 list
+    }>	//  list ind
+    0 PUSHINT	//  list ind cur=0
+    s2 PUSH	//  list ind cur=0 list
+    CTOS	//  list ind cur=0 ds
+    WHILE:<{
+      DUP	//  list ind cur ds ds
+      SREFS	//  list ind cur ds _8
+      s2 PUSH
+      s4 PUSH	//  list ind cur ds _8 cur ind
+      LESS	//  list ind cur ds _8 _9
+      AND	//  list ind cur ds _10
+    }>DO<{	//  list ind cur ds
+      s3 POP	//  ds ind cur
+      INC	//  ds ind cur
+      s0 s2 XCHG	//  cur ind ds
+      LDREF	//  cur ind _17 _16
+      DROP	//  cur ind list
+      DUP	//  cur ind list list
+      CTOS	//  cur ind list ds
+      s1 s3 XCHG	//  list ind cur ds
+    }>	//  list ind cur ds
+    DROP
+    NIP	//  list cur
+    SWAP	//  cur list
+  }>
+  user_top PROC:<{
+    //  which txid
+    load CALLDICT	//  which txid _20 _21 _22 _23 _24
+    DROP
+    DROP
+    NIP
+    NIP	//  which txid users_top
+    s2 PUSH	//  which txid users_top which
+    list_get_at CALLDICT	//  which txid ind val
+    err_bad_index_users_top CALLDICT	//  which txid ind val _11
+    s1 s2 XCHG
+    s0 s4 XCHG	//  _11 txid val ind which
+    NEQ	//  _11 txid val _12
+    s1 s3 XCHG	//  val txid _11 _12
+    _throw_if CALLDICT
+    SWAP	//  txid val
+    CTOS	//  txid _17
+    parse_user_top CALLDICT	//  txid _27 _28 _29
+    s2 POP	//  txid ri_count ri
+    -74195 PUSHINT	//  txid ri_count ri _19=-74195
+    s0 s2 XCHG	//  txid _19=-74195 ri ri_count
+  }>
+  user_info PROC:<{
+    //  id txid
+    load CALLDICT	//  id txid _22 _23 _24 _25 _26
+    DROP
+    NIP
+    NIP
+    NIP	//  id txid current_users
+    err_user_was_not_found CALLDICT	//  id txid current_users _12
+    s3 PUSH
+    SWAP	//  id txid current_users id _12
+    get_user CALLDICT	//  id txid _13
+    load_user CALLDICT	//  id txid prev_TPi days bans_count balance
+    s2 PUSH	//  id txid prev_TPi days bans_count balance days
+    CTOS	//  id txid prev_TPi days bans_count balance _17
+    unparse_day CALLDICT	//  id txid prev_TPi days bans_count balance ri ri_count
+    s0 s4 XCHG	//  id txid prev_TPi ri_count bans_count balance ri days
+    measure_days CALLDICT	//  id txid prev_TPi ri_count bans_count balance ri measure_days
+    -116430 PUSHINT	//  id txid prev_TPi ri_count bans_count balance ri measure_days _21=-116430
+    s7 s8 XCHG
+    s0 s7 XCHG
+    s0 s6 XCHG
+    s2 s5 XCHG
+    s2 s4 XCHG
+    s0 s3 XCHG
+    s1 s2 XCHG	//  txid _21=-116430 id ri ri_count prev_TPi measure_days bans_count balance
+  }>
+  ban_info PROC:<{
+    //  id txid
+    load CALLDICT	//  id txid _19 _20 _21 _22 _23
+    NIP
+    NIP
+    NIP
+    NIP	//  id txid banned_users
+    64 PUSHINT	//  id txid banned_users _10=64
+    s3 PUSH
+    s0 s2 XCHG
+    SWAP	//  id txid id banned_users _10=64
+    DICTUGET
+    NULLSWAPIFNOT	//  id txid stream exists
+    IFJMP:<{	//  id txid stream
+      32 LDU	//  id txid _27 _26
+      DROP	//  id txid pnd_count
+      -110623 PUSHINT	//  id txid pnd_count _16=-110623
+      s2 s3 XCHG
+      s0 s2 XCHG
+      SWAP	//  txid _16=-110623 id pnd_count
+    }>	//  id txid stream
+    DROP	//  id txid
+    -110623 PUSHINT	//  id txid _17=-110623
+    0 PUSHINT	//  id txid _17=-110623 _18=0
+    s2 s3 XCHG
+    s1 s2 XCHG	//  txid _17=-110623 id _18=0
+  }>
+  first_user_info PROC:<{
+    //  txid
+    load CALLDICT	//  txid _26 _27 _28 _29 _30
+    DROP
+    NIP
+    NIP
+    NIP	//  txid current_users
+    -1 PUSHINT	//  txid current_users id=-1
+    64 PUSHINT	//  txid current_users id=-1 _11=64
+    s1 s2 XCHG	//  txid id=-1 current_users _11=64
+    DICTUGETNEXT
+    NULLSWAPIFNOT
+    NULLSWAPIFNOT	//  txid _32 _31 _33
+    s2 POP	//  txid f id
+    err_user_was_not_found CALLDICT	//  txid f id _13
+    SWAP
+    s0 s2 XCHG	//  txid id _13 f
+    _throw_unless CALLDICT
+    SWAP	//  id txid
+    user_info CALLDICT	//  _34 _35 _36 _37 _38 _39 _40 _41 _42
+    s7 POP	//  txid balance id ri ri_count prev_TPi measure_days bans_count
+    -111055 PUSHINT	//  txid balance id ri ri_count prev_TPi measure_days bans_count _25=-111055
+    s0 s7 XCHG	//  txid _25=-111055 id ri ri_count prev_TPi measure_days bans_count balance
+  }>
+  prm2 PROC:<{
+    // 
+    load CALLDICT	//  _6 _7 _8 _9 _10
+    DROP
+    DROP
+    DROP
+    NIP	//  key
+  }>
+  prm3 PROC:<{
+    // 
+    load CALLDICT	//  _6 _7 _8 _9 _10
+    DROP
+    DROP
+    NIP
+    NIP	//  users_top
+  }>
+  prm4 PROC:<{
+    // 
+    load CALLDICT	//  _6 _7 _8 _9 _10
+    DROP
+    NIP
+    NIP
+    NIP	//  current_users
+  }>
+  prm5 PROC:<{
+    // 
+    load CALLDICT	//  _6 _7 _8 _9 _10
+    NIP
+    NIP
+    NIP
+    NIP	//  banned_users
+  }>
+}END>c

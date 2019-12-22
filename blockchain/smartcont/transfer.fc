@@ -1,0 +1,36 @@
+;; 2019 Blocklab
+;;
+;; License: MPL-2.0
+
+;; transfering tokens to users
+
+
+;; from wallet-v3.fif
+;;
+;; <b 0 32 u, "Self regular community payout" $, b> =: body-cell
+;; <b b{01} s, bounce 1 i, b{000100} s, dest_addr addr, amount Gram, 0 9 64 32 + + 1+ u, 
+;;  body-cell <s 2dup s-fits? not rot over 1 i, -rot { drop body-cell ref, } { s, } cond
+;; b>
+;;
+;; b{01} s, bounce 1 i, b{000100} == {011000100} == 196 dec
+;; 9 64 32 + + 1+ && 1 i, == 107
+;; 
+;; 32 - inner message code
+;; 5460547 24 u, - "SRC" (Self Regular Community) UT8
+;;
+
+cell transfer_message(slice addr, grams) impure {
+    var msg = begin_cell()
+    .store_uint(196, 9)
+    .store_slice(addr)
+    .store_grams(grams)
+    .store_uint(0, 107)
+    .store_uint(0, 32)
+    .store_uint(5460547, 24);
+    return msg.end_cell();
+}
+
+() send_grams(wc, addr, grams) impure {
+    cell addr_cell = begin_cell().store_uint(wc, 8).store_uint(addr, 256).end_cell();
+    send_raw_message(transfer_message(addr_cell.begin_parse(), grams), 3); ;; +1 - sender pays fees, +2 - ignore errors
+}
